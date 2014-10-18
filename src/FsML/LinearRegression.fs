@@ -33,12 +33,12 @@ module LinearRegression =
         | Without ->
           let endTheta = (startTheta - aux * mainTerm)
           let endCost = costFunction trainingX trainingY endTheta regularization
-          loop (i - 1) endTheta endCost
+          loop (i - 1) endTheta (startCost - endCost)
         | With(lambda) ->
           let regularizationTerm = lambda * (Array.append [|0.0|] (startTheta.SubVector(1, startTheta.Count - 1).ToArray()) |> DenseVector.OfArray)
           let endTheta = startTheta - aux * (mainTerm + regularizationTerm)
           let endCost = costFunction trainingX trainingY endTheta regularization
-          loop (i - 1) endTheta endCost
+          loop (i - 1) endTheta (startCost - endCost)
     loop numberOfiterations (DenseVector(trainingX.ColumnCount)) 1.0
 
   /// Fit with normal equation
