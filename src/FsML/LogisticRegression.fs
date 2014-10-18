@@ -11,7 +11,7 @@ module LogisticRegression =
     | Without
     | With of float
 
-  // Sigmoid function
+  /// Sigmoid function
   let sigmoidFunction (X: Matrix<_>) (theta: Vector<_>) =
     1.0 / (1.0 + (-1.0 * (X * theta)).PointwiseExp())
 
