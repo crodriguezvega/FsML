@@ -1,0 +1,43 @@
+﻿#I "../../../build/debug"
+#I "../../../packages/FSharp.Charting.0.90.7/lib/net40"
+#I "../../../packages/MathNet.Numerics.3.2.3/lib/net40"
+#I "../../../packages/MathNet.Numerics.FSharp.3.2.3/lib/net40"
+
+#r "FsML.dll"
+#r "FSharp.Charting.dll"
+#r "MathNet.Numerics.dll"
+#r "MathNet.Numerics.FSharp.dll"
+
+open System
+open System.Drawing
+
+open FsML
+open FSharp.Charting
+open MathNet.Numerics
+open MathNet.Numerics.LinearAlgebra
+open MathNet.Numerics.LinearAlgebra.Double
+open MathNet.Numerics.Distributions
+
+module FSharpCharting = fsi.AddPrinter(fun (ch:FSharp.Charting.ChartTypes.GenericChart) -> ch.ShowChart(); "FSharpCharting")
+
+let normalDistribution = Normal.WithMeanVariance(0.0, 2.0)
+
+let x1 = [|for i in 1 .. 100 -> normalDistribution.Sample()|]
+let x2 = [|for i in 1 .. 100 -> normalDistribution.Sample()|]
+let trainingX = [|
+                  (Array.create 100 1.0) |> Array.toList |> vector
+                  (x1 |> DenseVector.OfArray).PointwisePower(2.0)
+                  x2 |> Array.toList |> vector
+                |] |> DenseMatrix.OfColumnVectors
+let trainingY = [| for i in 0 .. trainingX.RowCount - 1 do
+                   if (trainingX.[i, 2] >= (pown trainingX.[i, 1] 2)) then yield 1.0
+                   else yield 0.0 |] |> DenseVector.OfArray
+
+let fit = LogisticRegression.fitWithGradientDescent trainingX trainingY 0.05 5000 (LogisticRegression.Regularization.With(5.0))
+
+let points = (x1, x2) ||> Array.map2 (fun x y -> (x, y))
+Chart.Combine(
+  [ Chart.Point(points |> Array.filter (fun x -> (snd x < pown (fst x) 2)))
+    Chart.Point(points |> Array.filter (fun x -> (snd x >= pown (fst x) 2)))
+    Chart.Line([|(Array.min x1 - 0.1) .. 0.1 .. (Array.max x1 + 0.1)|] |> Array.map (fun x -> x, -1.0 *(fit.At(0) + fit.At(1) * (pown x 2)) / fit.At(2)))
+         .WithXAxis(MajorTickMark = ChartTypes.TickMark(Interval = 1.0)) ])

@@ -5,19 +5,23 @@ open MathNet.Numerics
 open MathNet.Numerics.LinearAlgebra
 open MathNet.Numerics.LinearAlgebra.Double
 
-module LinearRegression =
+module LogisticRegression =
 
   type Regularization =
     | Without
     | With of float
 
+  // Sigmoid function
+  let sigmoidFunction (X: Matrix<_>) (theta: Vector<_>) =
+    1.0 / (1.0 + (-1.0 * (X * theta)).PointwiseExp())
+
   /// Cost function
   let costFunction (trainingX: Matrix<_>) (trainingY: Vector<_>) (theta: Vector<_>) regularization =
-    let aux = (1.0 / (2.0 * float trainingX.RowCount))
-    let costWithoutRegularization = aux * (trainingX * theta - trainingY).PointwisePower(2.0).Sum()
+    let aux = (1.0 / float trainingX.RowCount)
+    let costWithoutRegularization = -1.0 * aux * (trainingY * (sigmoidFunction trainingX theta).PointwiseLog() + (1.0 - trainingY) * (1.0 - sigmoidFunction trainingX theta).PointwiseLog())
     match regularization with
     | Without -> costWithoutRegularization
-    | With(lambda) -> costWithoutRegularization + aux * lambda * theta.SubVector(1, theta.Count - 1).PointwisePower(2.0).Sum()
+    | With(lambda) -> costWithoutRegularization + ((lambda * aux) / 2.0) * theta.SubVector(1, theta.Count - 1).PointwisePower(2.0).Sum()
 
   /// Fit with gradient descent
   let fitWithGradientDescent (trainingX: Matrix<_>) (trainingY: Vector<_>) learningRate numberOfiterations regularization =
@@ -28,25 +32,15 @@ module LinearRegression =
       | 0, _ -> startTheta
       | _, _ ->
         let aux = learningRate / float trainingX.RowCount
-        let mainTerm = trainingX.TransposeThisAndMultiply(trainingX * startTheta - trainingY)
+        let mainTerm = trainingX.TransposeThisAndMultiply(sigmoidFunction trainingX startTheta - trainingY)
         match regularization with
         | Without ->
           let endTheta = (startTheta - aux * mainTerm)
           let endCost = costFunction trainingX trainingY endTheta regularization
-          loop (i - 1) endTheta endCost
+          loop (i - 1) endTheta (startCost - endCost)
         | With(lambda) ->
           let regularizationTerm = lambda * (Array.append [|0.0|] (startTheta.SubVector(1, startTheta.Count - 1).ToArray()) |> DenseVector.OfArray)
           let endTheta = startTheta - aux * (mainTerm + regularizationTerm)
           let endCost = costFunction trainingX trainingY endTheta regularization
-          loop (i - 1) endTheta endCost
+          loop (i - 1) endTheta (startCost - endCost)
     loop numberOfiterations (DenseVector(trainingX.ColumnCount)) 1.0
-
-  /// Fit with normal equation
-  let fitWithNormalEquation (trainingX: Matrix<_>) (trainingY: Vector<_>) regularization =
-    let mainTerm = trainingX.TransposeThisAndMultiply trainingX
-    match regularization with
-    | Without -> (mainTerm.Inverse().TransposeAndMultiply trainingX) * trainingY
-    | With(lambda) ->
-      let regularizationTerm = SparseMatrix.diag trainingX.ColumnCount 1.0
-      regularizationTerm.[0, 0] <- 0.0
-      ((mainTerm + lambda * regularizationTerm).Inverse().TransposeAndMultiply trainingX) * trainingY
