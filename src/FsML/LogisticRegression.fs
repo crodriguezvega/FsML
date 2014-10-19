@@ -25,22 +25,22 @@ module LogisticRegression =
 
   /// Fit with gradient descent
   let fitWithGradientDescent (trainingX: Matrix<_>) (trainingY: Vector<_>) learningRate numberOfiterations regularization =
-    let rec loop i (startTheta: Vector<_>) costDifference =
-      let startCost = costFunction trainingX trainingY startTheta regularization
+    let rec loop i (beginTheta: Vector<_>) costDifference =
+      let beginCost = costFunction trainingX trainingY beginTheta regularization
       match i, costDifference with
-      | _, costDifference when (costDifference < 0.0 || Double.IsNaN(costDifference)) -> startTheta
-      | 0, _ -> startTheta
+      | _, costDifference when (costDifference < 0.0 || Double.IsNaN(costDifference)) -> beginTheta
+      | 0, _ -> beginTheta
       | _, _ ->
         let aux = learningRate / float trainingX.RowCount
-        let mainTerm = trainingX.TransposeThisAndMultiply(sigmoidFunction trainingX startTheta - trainingY)
+        let mainTerm = trainingX.TransposeThisAndMultiply(sigmoidFunction trainingX beginTheta - trainingY)
         match regularization with
         | Without ->
-          let endTheta = (startTheta - aux * mainTerm)
+          let endTheta = (beginTheta - aux * mainTerm)
           let endCost = costFunction trainingX trainingY endTheta regularization
-          loop (i - 1) endTheta (startCost - endCost)
+          loop (i - 1) endTheta (beginCost - endCost)
         | With(lambda) ->
-          let regularizationTerm = lambda * (Array.append [|0.0|] (startTheta.SubVector(1, startTheta.Count - 1).ToArray()) |> DenseVector.OfArray)
-          let endTheta = startTheta - aux * (mainTerm + regularizationTerm)
+          let regularizationTerm = lambda * (Array.append [|0.0|] (beginTheta.SubVector(1, beginTheta.Count - 1).ToArray()) |> DenseVector.OfArray)
+          let endTheta = beginTheta - aux * (mainTerm + regularizationTerm)
           let endCost = costFunction trainingX trainingY endTheta regularization
-          loop (i - 1) endTheta (startCost - endCost)
+          loop (i - 1) endTheta (beginCost - endCost)
     loop numberOfiterations (DenseVector(trainingX.ColumnCount)) 1.0
