@@ -28,7 +28,7 @@ module NeuralNetworks =
       // Result of sigmoid function becomes new input
       ((a, z) :: (forwardPropagation (sigmoidFunction z) tail))
 
-  // Calculate delta
+  /// Calculate delta
   let calculateDelta (input: Matrix<_>) (a: Matrix<_>) =
     let numberOfRow = input.RowCount
     let rec loop i (delta: Matrix<_>) =
@@ -40,7 +40,7 @@ module NeuralNetworks =
         loop (i + 1) (delta + inputRow.Multiply(aRow))
     loop 0 (DenseMatrix.zero input.ColumnCount a.ColumnCount)
 
-  // Back propagation
+  /// Back propagation
   let rec backPropagation (input: Matrix<_>) (thetas: Matrix<_> list) (az: (Matrix<_> * Matrix<_>) list) =
     match thetas, az with
     | _, [] -> []
