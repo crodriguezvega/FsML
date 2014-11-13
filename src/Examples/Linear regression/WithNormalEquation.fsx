@@ -25,7 +25,10 @@ let x = [|1.0 .. 1.0 .. 10.0|]
 let y = x |> Array.map (fun x -> (pown x 2) + normalDistribution.Sample())
 
 // Each row is a training sample
-let trainingX = (x |> DenseMatrix.OfColumnArrays).PointwisePower(2.0)
+let trainingX = [
+                  (Array.create x.Length 1.0) |> Array.toList |> vector
+                  (x |> DenseVector.OfArray).PointwisePower(2.0)
+                ] |> DenseMatrix.OfColumnVectors
 
 // Each element is the ouput value for each training sample
 let trainingY = y |> DenseVector.OfArray

@@ -8,17 +8,17 @@ open MathNet.Numerics.LinearAlgebra.Double
 module LogisticRegression =
 
   /// Sigmoid function
-  let sigmoidFunction (Z: Matrix<_>) (theta: Vector<_>) =
-    1.0 / (1.0 + (-1.0 * (Z * theta)).PointwiseExp())
+  let sigmoidFunction (Z: Vector<_>) =
+    1.0 / (1.0 + (-1.0 * Z)).PointwiseExp()
 
   /// Hypothesis
-  let hypothesys (X: Matrix<_>) (theta: Vector<_>) = sigmoidFunction X theta
+  let hypothesys (X: Matrix<_>) (theta: Vector<_>) = sigmoidFunction (X * theta)
 
   /// Cost function
   let costFunction (X: Matrix<_>) (Y: Vector<_>) (theta: Vector<_>) regularization =
     let aux = 1.0 / float X.RowCount
-    let costWithoutRegularization = -1.0 * aux * (Y * (sigmoidFunction X theta).PointwiseLog()
-                                    + (1.0 - Y) * (1.0 - sigmoidFunction X theta).PointwiseLog())
+    let costWithoutRegularization = -1.0 * aux * (Y * (sigmoidFunction (X * theta)).PointwiseLog()
+                                    + (1.0 - Y) * (1.0 - sigmoidFunction (X * theta)).PointwiseLog())
     match regularization with
     | Optimization.Regularization.Without -> costWithoutRegularization
     | Optimization.Regularization.With(lambda) -> costWithoutRegularization 
@@ -36,5 +36,7 @@ module LogisticRegression =
 
   /// Fit with gradient descent
   let fitWithGradientDescent (trainingX: Matrix<_>) (trainingY: Vector<_>) learningRate numberOfiterations regularization =
-    let trainingXWithInterceptTerm = trainingX.InsertColumn(0, DenseVector.Create(trainingX.RowCount, 1.0))
-    Optimization.gradientDescent costFunction gradientOfCostFunction trainingXWithInterceptTerm trainingY learningRate numberOfiterations regularization
+    Optimization.gradientDescent costFunction gradientOfCostFunction trainingX trainingY learningRate numberOfiterations regularization
+
+  // Predict
+  let predict (X: Matrix<_>) (theta: Vector<_>) = hypothesys X theta

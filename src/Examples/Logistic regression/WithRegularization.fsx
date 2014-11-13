@@ -20,19 +20,21 @@ open MathNet.Numerics.Distributions
 
 module WithRegularization = fsi.AddPrinter(fun (ch:FSharp.Charting.ChartTypes.GenericChart) -> ch.ShowChart() |> ignore; "(Chart)")
 
+let length = 100
 let normalDistribution = Normal.WithMeanVariance(0.0, 2.0)
 let x1 = [| for i in 1 .. 100 -> normalDistribution.Sample() |]
 let x2 = [| for i in 1 .. 100 -> normalDistribution.Sample() |]
 
 // Each row is a training sample
 let trainingX = [|
+                  (Array.create length 1.0) |> Array.toList |> vector
                   (x1 |> DenseVector.OfArray).PointwisePower(2.0)
                   x2 |> Array.toList |> vector
                 |] |> DenseMatrix.OfColumnVectors
 
 // Each element is the ouput value for each training sample
 let trainingY = [| for i in 0 .. trainingX.RowCount - 1 do
-                   if (trainingX.[i, 1] >= (pown trainingX.[i, 0] 2)) then yield 1.0
+                   if (trainingX.[i, 2] >= (pown trainingX.[i, 1] 2)) then yield 1.0
                    else yield 0.0 |] |> DenseVector.OfArray
 
 let fit = LogisticRegression.fitWithGradientDescent trainingX trainingY 0.05 5000 (Optimization.Regularization.With(5.0))

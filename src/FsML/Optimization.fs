@@ -11,8 +11,9 @@ module Optimization =
     | Without
     | With of float
 
-  // Gradient descent
-  let gradientDescent costFunction (gradientOfCostFunction: Matrix<_> -> Vector<_> -> Vector<_> -> Regularization -> Vector<_>)
+  // Gradient descent for linear and logistic regression
+  let gradientDescent (costFunction: Matrix<_> -> Vector<_> -> Vector<_> -> Regularization -> float)
+                      (gradientOfCostFunction: Matrix<_> -> Vector<_> -> Vector<_> -> Regularization -> Vector<_>)
                       (X: Matrix<_>) (Y: Vector<_>) (learningRate: float) numberOfiterations regularization =
     let rec loop i (beginTheta: Vector<_>) costDifference =
       let beginCost = costFunction X Y beginTheta regularization

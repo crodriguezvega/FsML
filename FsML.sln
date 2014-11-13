@@ -20,6 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Logistic regression", "Logi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Neural networks", "Neural networks", "{86B8A884-F4C7-4A23-B616-D62C214F67F7}"
 	ProjectSection(SolutionItems) = preProject
+		src\Examples\Neural networks\WithoutRegularization.fsx = src\Examples\Neural networks\WithoutRegularization.fsx
 		src\Examples\Neural networks\XNOR.fsx = src\Examples\Neural networks\XNOR.fsx
 	EndProjectSection
 EndProject

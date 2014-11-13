@@ -26,6 +26,7 @@ let y = x |> Array.map (fun x -> x + (pown x 2) + (pown x 3) + normalDistributio
 
 // Each row is a training sample
 let trainingX = [|
+                  (Array.create x.Length 1.0) |> Array.toList |> vector
                   x |> Array.toList |> vector
                   (x |> DenseVector.OfArray).PointwisePower(2.0)
                   (x |> DenseVector.OfArray).PointwisePower(3.0)

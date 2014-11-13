@@ -30,16 +30,17 @@ module LinearRegression =
 
   /// Fit with gradient descent
   let fitWithGradientDescent (trainingX: Matrix<_>) (trainingY: Vector<_>) learningRate numberOfiterations regularization =
-    let trainingXWithInterceptTerm = trainingX.InsertColumn(0, DenseVector.Create(trainingX.RowCount, 1.0))
-    Optimization.gradientDescent costFunction gradientOfCostFunction trainingXWithInterceptTerm trainingY learningRate numberOfiterations regularization
+    Optimization.gradientDescent costFunction gradientOfCostFunction trainingX trainingY learningRate numberOfiterations regularization
 
   /// Fit with normal equation
   let fitWithNormalEquation (trainingX: Matrix<_>) (trainingY: Vector<_>) regularization =
-    let trainingXWithInterceptTerm = trainingX.InsertColumn(0, DenseVector.Create(trainingX.RowCount, 1.0))
-    let mainTerm = trainingXWithInterceptTerm.TransposeThisAndMultiply trainingXWithInterceptTerm
+    let mainTerm = trainingX.TransposeThisAndMultiply trainingX
     match regularization with
-    | Optimization.Regularization.Without -> (mainTerm.Inverse().TransposeAndMultiply trainingXWithInterceptTerm) * trainingY
+    | Optimization.Regularization.Without -> (mainTerm.Inverse().TransposeAndMultiply trainingX) * trainingY
     | Optimization.Regularization.With(lambda) ->
-      let regularizationTerm = SparseMatrix.diag trainingXWithInterceptTerm.ColumnCount 1.0
+      let regularizationTerm = SparseMatrix.diag trainingX.ColumnCount 1.0
       regularizationTerm.[0, 0] <- 0.0
-      ((mainTerm + lambda * regularizationTerm).Inverse().TransposeAndMultiply trainingXWithInterceptTerm) * trainingY
+      ((mainTerm + lambda * regularizationTerm).Inverse().TransposeAndMultiply trainingX) * trainingY
+
+  // Predict
+  let predict (X: Matrix<_>) (theta: Vector<_>) = hypothesys X theta

@@ -40,8 +40,5 @@ let thetas: Matrix<_> list = [
   |] |> DenseMatrix.OfRowArrays
 ]
 
-// Calculate intermediate values between layers, and also output
-let az = NeuralNetworks.forwardPropagation X thetas
-
-// Extract output of neural network
-let output = fst (List.rev az).Head
+// Calculate output values
+let output = NeuralNetworks.predict X thetas
