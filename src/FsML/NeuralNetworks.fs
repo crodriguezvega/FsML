@@ -21,7 +21,7 @@ module NeuralNetworks =
     let aux = 1.0 / float Z.RowCount
     let costPositive = -1.0 * aux * (Y.TransposeAndMultiply((sigmoidFunction Z).PointwiseLog()))
     let costNegative = (1.0 - Y).TransposeAndMultiply((1.0 - sigmoidFunction Z).PointwiseLog())
-    let costWithoutRegularization = aux * (costPositive - costNegative).RowSums().Sum()
+    let costWithoutRegularization = aux * ((costPositive - costNegative).RowSums().Sum())
     match regularization with
     | Optimization.Regularization.Without -> costWithoutRegularization
     | Optimization.Regularization.With(lambda) ->
