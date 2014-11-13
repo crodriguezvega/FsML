@@ -23,10 +23,10 @@ module NeuralNetworks =
     let costNegative = (1.0 - Y).TransposeAndMultiply((1.0 - sigmoidFunction Z).PointwiseLog())
     let costWithoutRegularization = (costPositive - costNegative).RowSums().Sum()
     match regularization with
-    | Optimization.Regularization.Without -> costWithoutRegularization
+    | Optimization.Regularization.Without -> aux * costWithoutRegularization
     | Optimization.Regularization.With(lambda) ->
       let regularizationTerm = [ for theta in thetas -> theta.RemoveColumn(0).PointwisePower(2.0).RowSums().Sum() ] |> List.fold (+) 0.0
-      costWithoutRegularization + ((lambda * aux) / (2.0 * (float numberOfTrainingSamples))) * regularizationTerm
+      aux * (costWithoutRegularization + (lambda / (2.0 * (float numberOfTrainingSamples))) * regularizationTerm)
 
   /// Forward propagation
   let rec forwardPropagation (X: Matrix<_>) (thetas: Matrix<_> list): ((Matrix<_> * Matrix<_>) list) =
