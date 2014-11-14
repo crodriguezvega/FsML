@@ -40,7 +40,7 @@ module NeuralNetworks =
       // Result of sigmoid function becomes new input
       ((a, z) :: (forwardPropagation (sigmoidFunction z) tail))
 
-  /// Calculate gradient
+  /// Gradient of cost function
   let gradientOfCostFunction (delta: Matrix<_>) (a: Matrix<_>) (unbiasedTheta: Matrix<_>) numberOfTrainingSamples regularization =
     let numberOfRow = delta.RowCount
     let rec loop i (acc: Matrix<_>) =
