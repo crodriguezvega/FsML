@@ -21,7 +21,7 @@ module NeuralNetworks =
     let aux = 1.0 / float Z.RowCount
     let costPositive = -1.0 * aux * (Y.TransposeAndMultiply((sigmoidFunction Z).PointwiseLog()))
     let costNegative = (1.0 - Y).TransposeAndMultiply((1.0 - sigmoidFunction Z).PointwiseLog())
-    let costWithoutRegularization = aux * ((costPositive - costNegative).RowSums().Sum())
+    let costWithoutRegularization = aux * (costPositive - costNegative).RowSums().Sum()
     match regularization with
     | Optimization.Regularization.Without -> costWithoutRegularization
     | Optimization.Regularization.With(lambda) ->
@@ -47,12 +47,12 @@ module NeuralNetworks =
       match i with
       | _ when i = numberOfRow ->
         let aux = 1.0 / (float numberOfTrainingSamples)
-        let mainTerm = acc
+        let gradientWithoutRegularization = aux * acc
         match regularization with
-        | Optimization.Regularization.Without -> aux * acc
+        | Optimization.Regularization.Without -> gradientWithoutRegularization
         | Optimization.Regularization.With(lambda) -> 
           let regularizationTerm = lambda * unbiasedTheta
-          aux * (acc + regularizationTerm)
+          gradientWithoutRegularization + aux * regularizationTerm
       | _ ->
         let inputRow = [| delta.Row(i) |] |> DenseMatrix.OfColumnVectors
         let aRow = [| a.Row(i) |] |> DenseMatrix.OfRowVectors
@@ -84,12 +84,12 @@ module NeuralNetworks =
 
   /// Train
   let train (trainingX: Matrix<_>) (trainingY: Matrix<_>) (thetas: Matrix<_> list) (learningRate: float) numberOfiterations regularization =
-    let rec updateTheta (thetas: Matrix<_> list) (gradients: Matrix<_> list) =
+    let rec update (thetas: Matrix<_> list) (gradients: Matrix<_> list) =
       match thetas, gradients with
       | [], [] -> []
       | theta :: tailTheta, gradient :: tailGradient ->
         let updatedTheta = theta - learningRate * gradient
-        (updatedTheta :: updateTheta tailTheta tailGradient)
+        (updatedTheta :: update tailTheta tailGradient)
       | _, _ -> failwith "Length of lists of theta and gradient matrices do not match"
 
     let rec loop i thetas =
@@ -98,7 +98,7 @@ module NeuralNetworks =
       | _ ->
         let az = forwardPropagation trainingX thetas
         let gradientOfCostFunction = backPropagation trainingY (List.rev thetas) (List.rev az) trainingX.RowCount regularization
-        loop (i - 1) (updateTheta thetas (List.rev gradientOfCostFunction))
+        loop (i - 1) (update thetas (List.rev gradientOfCostFunction))
     loop numberOfiterations thetas
 
   /// Predict

@@ -33,7 +33,7 @@ let trainingX = [|
                 |] |> DenseMatrix.OfColumnVectors
 
 // Each element is the ouput value for each training sample
-let trainingY = [| for i in 0 .. trainingX.RowCount - 1 do
+let trainingY = [| for i in 0 .. length - 1 do
                    if (trainingX.[i, 2] >= (pown trainingX.[i, 1] 2)) then yield 1.0
                    else yield 0.0 |] |> DenseVector.OfArray
 

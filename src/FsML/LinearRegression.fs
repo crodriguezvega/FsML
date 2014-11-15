@@ -21,12 +21,12 @@ module LinearRegression =
   /// Gradient of cost function
   let gradientOfCostFunction (X: Matrix<_>) (Y: Vector<_>) (theta: Vector<_>) regularization =
     let aux = 1.0 / float X.RowCount
-    let mainTerm = X.TransposeThisAndMultiply((hypothesys X theta) - Y)
+    let gradientWithoutRegularization = aux * X.TransposeThisAndMultiply((hypothesys X theta) - Y)
     match regularization with
-    | Optimization.Regularization.Without -> aux * mainTerm
+    | Optimization.Regularization.Without -> gradientWithoutRegularization
     | Optimization.Regularization.With(lambda) ->
       let regularizationTerm = lambda * (Array.append [|0.0|] (theta.SubVector(1, theta.Count - 1).ToArray()) |> DenseVector.OfArray)
-      aux * (mainTerm + regularizationTerm)
+      gradientWithoutRegularization + aux * regularizationTerm
 
   /// Fit with gradient descent
   let fitWithGradientDescent (trainingX: Matrix<_>) (trainingY: Vector<_>) learningRate numberOfiterations regularization =

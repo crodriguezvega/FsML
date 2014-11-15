@@ -33,11 +33,11 @@ let trainingX = [|
                 |] |> DenseMatrix.OfColumnArrays
 
 // Each element is the ouput value for each training sample
-let trainingY = [| for i in 0 .. trainingX.RowCount - 1 do
+let trainingY = [| for i in 0 .. length - 1 do
                    if (trainingX.[i, 1] + trainingX.[i, 2]) >= 1.0 then yield 1.0
                    else yield 0.0 |] |> DenseVector.OfArray
 
-let fit = LogisticRegression.fitWithGradientDescent trainingX trainingY 0.01 5000 Optimization.Regularization.Without
+let fit = LogisticRegression.fitWithGradientDescent trainingX trainingY 0.05 5000 Optimization.Regularization.Without
 
 let points = (x1, x2) ||> Array.map2 (fun x y -> (x, y))
 Chart.Combine(
