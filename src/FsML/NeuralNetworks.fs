@@ -19,7 +19,7 @@ module NeuralNetworks =
   /// Cost function
   let costFunction (Z: Matrix<_>) (Y: Matrix<_>) (thetas: Matrix<_> list) numberOfTrainingSamples regularization =
     let aux = 1.0 / float Z.RowCount
-    let costPositive = -1.0 * aux * (Y.TransposeAndMultiply((sigmoidFunction Z).PointwiseLog()))
+    let costPositive = -1.0 * (Y.TransposeAndMultiply((sigmoidFunction Z).PointwiseLog()))
     let costNegative = (1.0 - Y).TransposeAndMultiply((1.0 - sigmoidFunction Z).PointwiseLog())
     let costWithoutRegularization = aux * (costPositive - costNegative).RowSums().Sum()
     match regularization with
