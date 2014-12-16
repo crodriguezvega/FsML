@@ -39,6 +39,10 @@ let trainingY = [| for i in 0 .. length - 1 do
 
 let fit = LogisticRegression.fitWithGradientDescent trainingX trainingY 0.05 5000 Optimization.Regularization.Without
 
+// Predict output (it should be 1)
+let input = matrix([ [ 1.0; 3.0; 3.0 ] ])
+let prediction = LogisticRegression.predict input fit
+
 let points = (x1, x2) ||> Array.map2 (fun x y -> (x, y))
 Chart.Combine(
   [ Chart.Point(points |> Array.filter (fun x -> (fst x + snd x) < 1.0))

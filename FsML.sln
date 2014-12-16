@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2013 for Windows Desktop
-VisualStudioVersion = 12.0.21005.1
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{99998F8E-0218-4A24-B97E-2DE7F6143C54}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Linear regression", "Linear regression", "{193AD9F0-38F1-43C4-B40C-220FCB74A697}"
@@ -28,6 +26,12 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsML", "src\FsML\FsML.fspro
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsML.Tests", "src\FsML.Tests\FsML.Tests.fsproj", "{FA7E90EE-74E9-4F9D-A194-922A48B54149}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "K-means", "K-means", "{89518C3E-A1FE-4323-B619-CF5CBCD98D73}"
+	ProjectSection(SolutionItems) = preProject
+		src\Examples\K-means\WithSpecificInitialCentroids.fsx = src\Examples\K-means\WithSpecificInitialCentroids.fsx
+		src\Examples\K-means\WithRandomInitialCentroids.fsx = src\Examples\K-means\WithRandomInitialCentroids.fsx
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,5 +54,6 @@ Global
 		{193AD9F0-38F1-43C4-B40C-220FCB74A697} = {99998F8E-0218-4A24-B97E-2DE7F6143C54}
 		{765777A8-BE63-49E6-B967-8C8DA956CE19} = {99998F8E-0218-4A24-B97E-2DE7F6143C54}
 		{86B8A884-F4C7-4A23-B616-D62C214F67F7} = {99998F8E-0218-4A24-B97E-2DE7F6143C54}
+		{89518C3E-A1FE-4323-B619-CF5CBCD98D73} = {99998F8E-0218-4A24-B97E-2DE7F6143C54}
 	EndGlobalSection
 EndGlobal

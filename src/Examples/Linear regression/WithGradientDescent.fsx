@@ -21,21 +21,20 @@ open MathNet.Numerics.Distributions
 module WithGradientDescent = fsi.AddPrinter(fun (ch:FSharp.Charting.ChartTypes.GenericChart) -> ch.ShowChart() |> ignore; "(Chart)")
 
 let normalDistribution = Normal.WithMeanVariance(0.0, 2.0)
-let x = [|1.0 .. 1.0 .. 10.0|]
+let x = [| 1.0 .. 1.0 .. 10.0 |]
 let y = x |> Array.map (fun x -> x + normalDistribution.Sample())
 
 // Each row is a training sample
-let trainingX = [
+let trainingX = [|
                   Array.create x.Length 1.0 // Add intercept term
                   x
-                ] |> DenseMatrix.OfColumnArrays
+                |] |> DenseMatrix.OfColumnArrays
 
 // Each element is the ouput value for each training sample
 let trainingY = y |> DenseVector.OfArray
 
 let fit = LinearRegression.fitWithGradientDescent trainingX trainingY 0.01 1500 Optimization.Regularization.Without
-let pp = fit.ToArray()
-printfn "%A" pp
+
 Chart.Combine(
   [ Chart.Point ((x, y) ||> Array.map2 (fun x y -> (x, y)))
     Chart.Line (x |> Array.map (fun x -> (x, fit.At(0) + fit.At(1) * x))) ])

@@ -54,9 +54,10 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" Condition="Exists('$(FSharpTargetsPath)')" />
   <ItemGroup>
-    <Compile Include="LinearRegressionTests.fs" />
-    <Compile Include="LogisticRegressionTests.fs" />
-    <Compile Include="NeuralNetworksTests.fs" />
+    <Compile Include="Regression\LinearRegressionTests.fs" />
+    <Compile Include="Classification\LogisticRegressionTests.fs" />
+    <Compile Include="Classification\NeuralNetworksTests.fs" />
+	<Compile Include="Clustering\K-meansTests.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">

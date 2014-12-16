@@ -11,7 +11,7 @@ module LogisticRegression =
   let sigmoidFunction (Z: Vector<_>) =
     1.0 / (1.0 + (-1.0 * Z).PointwiseExp())
 
-  /// Hypothesis
+  /// Hypothesis (output is the estimated probability that y = 1 on input x)
   let hypothesys (X: Matrix<_>) (theta: Vector<_>) = sigmoidFunction (X * theta)
 
   /// Cost function
@@ -39,4 +39,4 @@ module LogisticRegression =
     Optimization.gradientDescent costFunction gradientOfCostFunction trainingX trainingY learningRate numberOfiterations regularization
 
   // Predict
-  let predict (X: Matrix<_>) (theta: Vector<_>) = hypothesys X theta
+  let predict (X: Matrix<_>) (theta: Vector<_>) = Vector.map (fun x -> if x > 0.5 then 1.0 else 0.0 ) (hypothesys X theta)

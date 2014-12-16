@@ -9,7 +9,7 @@ open MathNet.Numerics.LinearAlgebra.Double
 module NeuralNetworksTests =
 
   [<TestFixture>]
-  type ForwarPropagation () =
+  type ForwadrPropagation () =
 
     [<Test>]
     member this.AND () =

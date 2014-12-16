@@ -48,10 +48,11 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Optimization.fs" />
-    <Compile Include="LinearRegression.fs" />
-    <Compile Include="LogisticRegression.fs" />
-    <Compile Include="NeuralNetworks.fs" />
+    <Compile Include="Utils\Optimization.fs" />
+    <Compile Include="Regression\LinearRegression.fs" />
+    <Compile Include="Classification\LogisticRegression.fs" />
+    <Compile Include="Classification\NeuralNetworks.fs" />
+	<Compile Include="Clustering\K-means.fs" />
     <None Include="packages.config" />
   </ItemGroup>
   <PropertyGroup>

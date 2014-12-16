@@ -21,14 +21,14 @@ open MathNet.Numerics.Distributions
 module WithNormalEquation = fsi.AddPrinter(fun (ch:FSharp.Charting.ChartTypes.GenericChart) -> ch.ShowChart() |> ignore; "(Chart)")
 
 let normalDistribution = Normal.WithMeanVariance(0.0, 5.0)
-let x = [|1.0 .. 1.0 .. 10.0|]
+let x = [| 1.0 .. 1.0 .. 10.0 |]
 let y = x |> Array.map (fun x -> (pown x 2) + normalDistribution.Sample())
 
 // Each row is a training sample
-let trainingX = [
+let trainingX = [|
                   (Array.create x.Length 1.0) |> Array.toList |> vector
                   (x |> DenseVector.OfArray).PointwisePower(2.0)
-                ] |> DenseMatrix.OfColumnVectors
+                |] |> DenseMatrix.OfColumnVectors
 
 // Each element is the ouput value for each training sample
 let trainingY = y |> DenseVector.OfArray

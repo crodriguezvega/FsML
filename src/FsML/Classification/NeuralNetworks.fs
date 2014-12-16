@@ -29,16 +29,16 @@ module NeuralNetworks =
       costWithoutRegularization + ((lambda * aux) / (2.0 * (float numberOfTrainingSamples))) * regularizationTerm
 
   /// Forward propagation
-  let rec forwardPropagation (X: Matrix<_>) (thetas: Matrix<_> list): ((Matrix<_> * Matrix<_>) list) =
+  let rec forwardPropagation (X: Matrix<_>) (thetas: Matrix<_> list): ((Matrix<_> * Matrix<_> option) list) =
     match thetas with
-    | [] -> [(X, DenseMatrix.create 1 1 0.0)] // Trying to simulate an empty matrix for z
+    | [] -> [(X, None)] // Trying to simulate an empty matrix for z
     | theta :: tail ->
       // Add bias unit
       let a = X.InsertColumn(0, DenseVector.Create(X.RowCount, 1.0))
       // Multiply activation with theta
       let z = a.TransposeAndMultiply(theta)
       // Result of sigmoid function becomes new input
-      ((a, z) :: (forwardPropagation (sigmoidFunction z) tail))
+      (a, Some(z)) :: (forwardPropagation (sigmoidFunction z) tail)
 
   /// Gradient of cost function
   let gradientOfCostFunction (delta: Matrix<_>) (a: Matrix<_>) (unbiasedTheta: Matrix<_>) numberOfTrainingSamples regularization =
@@ -60,11 +60,11 @@ module NeuralNetworks =
     loop 0 (DenseMatrix.zero delta.ColumnCount a.ColumnCount)
 
   /// Back propagation
-  let rec backPropagation (input: Matrix<_>) (thetas: Matrix<_> list) (az: (Matrix<_> * Matrix<_>) list)
+  let rec backPropagation (input: Matrix<_>) (thetas: Matrix<_> list) (az: (Matrix<_> * Matrix<_> option) list)
                           (numberOfTrainingSamples: int) regularization =
     match thetas, az with
     | _, [] -> []
-    | theta :: tailTheta, (aLast, zLast) :: (aSecondToLast, zSecondToLast) :: tailAz when (zLast.ToArray() = (Array2D.zeroCreate 1 1)) ->
+    | theta :: tailTheta, (aLast, None) :: (aSecondToLast, zSecondToLast) :: tailAz ->
       // Remove elements for bias unit
       let unbiasedTheta = theta.RemoveColumn(0)
       // Calculate error in the activation nodes of the output layer
@@ -72,14 +72,14 @@ module NeuralNetworks =
       // Calculate gradient of cost function at the output layer
       let gradient = gradientOfCostFunction delta aSecondToLast unbiasedTheta numberOfTrainingSamples regularization
       (gradient :: backPropagation delta (theta :: tailTheta) tailAz numberOfTrainingSamples regularization)
-    | theta :: tailTheta, (a, z) :: tailAz ->
+    | theta :: tailTheta, (a, Some(z)) :: tailAz ->
       // Remove elements for bias unit
       let unbiasedTheta = theta.RemoveColumn(0)
       // Calculate the error in the activation nodes of the hidden layer
       let delta = input.Multiply(unbiasedTheta).PointwiseMultiply(gradientOfSigmoidFunction z)
       // Calculate gradient of cost function at the hidden layer
       let gradient = gradientOfCostFunction delta a unbiasedTheta numberOfTrainingSamples regularization
-      (gradient :: backPropagation delta tailTheta tailAz numberOfTrainingSamples regularization)
+      gradient :: (backPropagation delta tailTheta tailAz numberOfTrainingSamples regularization)
     | _, _ -> failwith "Length of lists of theta matrices and (a, z) tuples do not match"
 
   /// Train
@@ -89,7 +89,7 @@ module NeuralNetworks =
       | [], [] -> []
       | theta :: tailTheta, gradient :: tailGradient ->
         let updatedTheta = theta - learningRate * gradient
-        (updatedTheta :: update tailTheta tailGradient)
+        updatedTheta :: (update tailTheta tailGradient)
       | _, _ -> failwith "Length of lists of theta and gradient matrices do not match"
 
     let rec loop i thetas =

@@ -21,7 +21,7 @@ open MathNet.Numerics.Distributions
 module WithPolynomialFeatures = fsi.AddPrinter(fun (ch:FSharp.Charting.ChartTypes.GenericChart) -> ch.ShowChart() |> ignore; "(Chart)")
 
 let normalDistribution = Normal.WithMeanVariance(5.0, 10.0)
-let x = [|-5.0 .. 0.5 .. 5.0|]
+let x = [| -5.0 .. 0.5 .. 5.0 |]
 let y = x |> Array.map (fun x -> x + (pown x 2) + (pown x 3) + normalDistribution.Sample())
 
 // Each row is a training sample
