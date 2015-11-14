@@ -30,18 +30,22 @@ module LogisticRegressionTests =
 
     [<Test>]
     member this.withoutRegularization () =
-      Assert.AreEqual(0.0, LogisticRegression.costFunction trainingX trainingY theta (Optimization.Regularization.Without), 0.01)
+      let cost = LogisticRegression.costFunction Optimization.Regularization.Without trainingX trainingY theta
+
+      Assert.AreEqual(0.0, cost, 0.01)
 
     [<Test>]
     member this.withRegularization () =
-      Assert.AreEqual(5.0, LogisticRegression.costFunction trainingX trainingY theta (Optimization.Regularization.With(10.0)), 0.01)
+      let cost = LogisticRegression.costFunction (Optimization.Regularization.With(10.0)) trainingX trainingY theta
+
+      Assert.AreEqual(5.0, cost, 0.01)
 
   [<TestFixture>]
   type CalculationOfGradientCostFunction () =
 
     [<Test>]
     member this.withoutRegularization () =
-      let gradient = LogisticRegression.gradientOfCostFunction trainingX trainingY theta (Optimization.Regularization.Without)
+      let gradient = LogisticRegression.gradientOfCostFunction Optimization.Regularization.Without Optimization.GradientDescent.Standard trainingX trainingY theta
 
       Assert.AreEqual(0.0, gradient.At(0), 0.01)
       Assert.AreEqual(0.0, gradient.At(1), 0.01)
@@ -49,7 +53,7 @@ module LogisticRegressionTests =
 
     [<Test>]
     member this.withRegularization () =
-      let gradient = LogisticRegression.gradientOfCostFunction trainingX trainingY theta (Optimization.Regularization.With(10.0))
+      let gradient = LogisticRegression.gradientOfCostFunction (Optimization.Regularization.With(10.0)) Optimization.GradientDescent.Standard trainingX trainingY theta
 
       Assert.AreEqual(0.0, gradient.At(0), 0.01)
       Assert.AreEqual(5.0, gradient.At(1), 0.01)

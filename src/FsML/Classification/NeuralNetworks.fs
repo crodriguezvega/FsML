@@ -8,16 +8,16 @@ open MathNet.Numerics.LinearAlgebra.Double
 module NeuralNetworks =
 
   /// Sigmoid function
-  let sigmoidFunction (Z: Matrix<_>) =
+  let sigmoidFunction (Z: Matrix<float>) =
     1.0 / (1.0 + (-1.0 * Z).PointwiseExp())
 
   /// Gradient of sigmoid function
-  let gradientOfSigmoidFunction (Z: Matrix<_>) =
+  let gradientOfSigmoidFunction (Z: Matrix<float>) =
     let sigZ = sigmoidFunction Z
     sigZ.PointwiseMultiply(1.0 - sigZ)
 
   /// Cost function
-  let costFunction (Z: Matrix<_>) (Y: Matrix<_>) (thetas: Matrix<_> list) numberOfTrainingSamples regularization =
+  let costFunction regularization (Z: Matrix<float>) (Y: Matrix<float>) (thetas: Matrix<float> list) numberOfTrainingSamples =
     let aux = 1.0 / float Z.RowCount
     let costPositive = -1.0 * (Y.TransposeAndMultiply((sigmoidFunction Z).PointwiseLog()))
     let costNegative = (1.0 - Y).TransposeAndMultiply((1.0 - sigmoidFunction Z).PointwiseLog())
@@ -29,7 +29,7 @@ module NeuralNetworks =
       costWithoutRegularization + ((lambda * aux) / (2.0 * (float numberOfTrainingSamples))) * regularizationTerm
 
   /// Forward propagation
-  let rec forwardPropagation (X: Matrix<_>) (thetas: Matrix<_> list): ((Matrix<_> * Matrix<_> option) list) =
+  let rec forwardPropagation (X: Matrix<float>) (thetas: Matrix<float> list): ((Matrix<float> * Matrix<float> option) list) =
     match thetas with
     | [] -> [(X, None)] // Trying to simulate an empty matrix for z
     | theta :: tail ->
@@ -41,9 +41,9 @@ module NeuralNetworks =
       (a, Some(z)) :: (forwardPropagation (sigmoidFunction z) tail)
 
   /// Gradient of cost function
-  let gradientOfCostFunction (delta: Matrix<_>) (a: Matrix<_>) (unbiasedTheta: Matrix<_>) numberOfTrainingSamples regularization =
+  let gradientOfCostFunction regularization (delta: Matrix<float>) (a: Matrix<float>) (unbiasedTheta: Matrix<float>) numberOfTrainingSamples =
     let numberOfRow = delta.RowCount
-    let rec loop i (acc: Matrix<_>) =
+    let rec loop i (acc: Matrix<float>) =
       match i with
       | _ when i = numberOfRow ->
         let aux = 1.0 / (float numberOfTrainingSamples)
@@ -60,8 +60,7 @@ module NeuralNetworks =
     loop 0 (DenseMatrix.zero delta.ColumnCount a.ColumnCount)
 
   /// Back propagation
-  let rec backPropagation (input: Matrix<_>) (thetas: Matrix<_> list) (az: (Matrix<_> * Matrix<_> option) list)
-                          (numberOfTrainingSamples: int) regularization =
+  let rec backPropagation regularization (input: Matrix<float>) (thetas: Matrix<float> list) az numberOfTrainingSamples =
     match thetas, az with
     | _, [] -> []
     | theta :: tailTheta, (aLast, None) :: (aSecondToLast, zSecondToLast) :: tailAz ->
@@ -70,21 +69,21 @@ module NeuralNetworks =
       // Calculate error in the activation nodes of the output layer
       let delta = aLast - input
       // Calculate gradient of cost function at the output layer
-      let gradient = gradientOfCostFunction delta aSecondToLast unbiasedTheta numberOfTrainingSamples regularization
-      (gradient :: backPropagation delta (theta :: tailTheta) tailAz numberOfTrainingSamples regularization)
+      let gradient = gradientOfCostFunction regularization delta aSecondToLast unbiasedTheta numberOfTrainingSamples
+      (gradient :: backPropagation regularization delta (theta :: tailTheta) tailAz numberOfTrainingSamples)
     | theta :: tailTheta, (a, Some(z)) :: tailAz ->
       // Remove elements for bias unit
       let unbiasedTheta = theta.RemoveColumn(0)
       // Calculate the error in the activation nodes of the hidden layer
       let delta = input.Multiply(unbiasedTheta).PointwiseMultiply(gradientOfSigmoidFunction z)
       // Calculate gradient of cost function at the hidden layer
-      let gradient = gradientOfCostFunction delta a unbiasedTheta numberOfTrainingSamples regularization
-      gradient :: (backPropagation delta tailTheta tailAz numberOfTrainingSamples regularization)
+      let gradient = gradientOfCostFunction regularization delta a unbiasedTheta numberOfTrainingSamples
+      gradient :: (backPropagation regularization delta tailTheta tailAz numberOfTrainingSamples)
     | _, _ -> failwith "Length of lists of theta matrices and (a, z) tuples do not match"
 
   /// Train
-  let train (trainingX: Matrix<_>) (trainingY: Matrix<_>) (thetas: Matrix<_> list) (learningRate: float) numberOfiterations regularization =
-    let rec update (thetas: Matrix<_> list) (gradients: Matrix<_> list) =
+  let train regularization (X: Matrix<float>) Y thetas (learningRate: float) numberOfiterations =
+    let rec update (thetas: Matrix<float> list) (gradients: Matrix<float> list) =
       match thetas, gradients with
       | [], [] -> []
       | theta :: tailTheta, gradient :: tailGradient ->
@@ -96,12 +95,12 @@ module NeuralNetworks =
       match i with
       | 0 -> thetas
       | _ ->
-        let az = forwardPropagation trainingX thetas
-        let gradientOfCostFunction = backPropagation trainingY (List.rev thetas) (List.rev az) trainingX.RowCount regularization
+        let az = forwardPropagation X thetas
+        let gradientOfCostFunction = backPropagation regularization Y (List.rev thetas) (List.rev az) X.RowCount
         loop (i - 1) (update thetas (List.rev gradientOfCostFunction))
     loop numberOfiterations thetas
 
   /// Predict
-  let predict (input: Matrix<_>) (thetas: Matrix<_> list) =
+  let predict input thetas =
     let az = forwardPropagation input thetas
     fst (List.rev az).Head

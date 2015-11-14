@@ -52,7 +52,7 @@
     <Compile Include="Regression\LinearRegression.fs" />
     <Compile Include="Classification\LogisticRegression.fs" />
     <Compile Include="Classification\NeuralNetworks.fs" />
-	<Compile Include="Clustering\K-means.fs" />
+    <Compile Include="Clustering\K-means.fs" />
     <None Include="packages.config" />
   </ItemGroup>
   <PropertyGroup>

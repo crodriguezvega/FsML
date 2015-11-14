@@ -19,7 +19,7 @@ module NeuralNetworksTests =
                 [| 1.0; 0.0 |]
                 [| 1.0; 1.0 |]
               |] |> DenseMatrix.OfRowArrays
-      let thetas: Matrix<_> list = [ [| -30.0; 20.0; 20.0 |] |> DenseMatrix.OfRowArrays ]
+      let thetas: Matrix<float> list = [ [| -30.0; 20.0; 20.0 |] |> DenseMatrix.OfRowArrays ]
 
       let az = NeuralNetworks.forwardPropagation X thetas
       let output = fst (List.rev az).Head

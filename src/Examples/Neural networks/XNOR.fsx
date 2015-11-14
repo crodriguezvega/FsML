@@ -30,7 +30,7 @@ let X = [|
 
 // The length of the list determines the number of layers (hidden plus output)
 // Each row of a theta matrix contains the coefficients for each unit of the layer from top to bottom
-let thetas: Matrix<_> list = [
+let thetas: Matrix<float> list = [
   [|
     [| -30.0; 20.0; 20.0 |]
     [| 10.0; -20.0; -20.0 |]

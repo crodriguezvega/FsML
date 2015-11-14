@@ -45,9 +45,9 @@ let assignments = seq [ for i in 0 .. (numberOfIterations - 1) do
                           // Get a number of randon points as initial centroids
                           let numberOfclusters = 3;
                           let discreteDistribution = DiscreteUniform(0, (Seq.length points) - 1)
-                          let initialCentroids = seq [ for j in 0 .. (numberOfclusters - 1) do
-                                                         let index = discreteDistribution.Sample()
-                                                         yield Seq.nth index points ]
+                          let initialCentroids = [ for j in 0 .. (numberOfclusters - 1) do
+                                                     let index = discreteDistribution.Sample()
+                                                     yield Seq.nth index points ]
                           // Find the the optimal centroid for each point
                           let optimalCentroids = Kmeans.findOptimalCentroids points initialCentroids 100
                           let assignment = Kmeans.cluster points optimalCentroids

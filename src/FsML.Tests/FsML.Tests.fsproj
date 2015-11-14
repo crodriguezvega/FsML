@@ -22,7 +22,7 @@
     <WarningLevel>3</WarningLevel>
     <DocumentationFile>..\..\build\debug\FsML.Tests.XML</DocumentationFile>
     <StartAction>Program</StartAction>
-    <StartProgram>packages/NUnit.2.6.3/bin/nunit.exe</StartProgram>
+    <StartProgram>packages/NUnit-2.6.4/bin/nunit.exe</StartProgram>
     <StartArguments>FsML.Tests.dll</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -57,7 +57,7 @@
     <Compile Include="Regression\LinearRegressionTests.fs" />
     <Compile Include="Classification\LogisticRegressionTests.fs" />
     <Compile Include="Classification\NeuralNetworksTests.fs" />
-	<Compile Include="Clustering\K-meansTests.fs" />
+    <Compile Include="Clustering\K-meansTests.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">
@@ -71,7 +71,7 @@
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="nunit.framework">
-      <HintPath>..\..\packages\NUnit.2.6.3\bin\nunit.framework.dll</HintPath>
+      <HintPath>..\..\packages\NUnit-2.6.4\bin\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

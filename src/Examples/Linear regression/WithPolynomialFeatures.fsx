@@ -35,7 +35,7 @@ let trainingX = [|
 // Each element is the ouput value for each training sample
 let trainingY = y |> DenseVector.OfArray
 
-let fit = LinearRegression.fitWithNormalEquation trainingX trainingY Optimization.Regularization.Without
+let fit = LinearRegression.fitWithNormalEquation Optimization.Regularization.Without trainingX trainingY
 
 Chart.Combine(
   [ Chart.Point ((x, y) ||> Array.map2 (fun x y -> (x, y)))

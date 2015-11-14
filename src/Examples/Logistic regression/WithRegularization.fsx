@@ -37,7 +37,8 @@ let trainingY = [| for i in 0 .. length - 1 do
                    if (trainingX.[i, 2] >= (pown trainingX.[i, 1] 2)) then yield 1.0
                    else yield 0.0 |] |> DenseVector.OfArray
 
-let fit = LogisticRegression.fitWithGradientDescent trainingX trainingY 0.05 5000 (Optimization.Regularization.With(5.0))
+let logisticRegressionWithRegularization = LogisticRegression.fitWithGradientDescent (Optimization.Regularization.With(5.0)) Optimization.GradientDescent.Standard
+let fit = logisticRegressionWithRegularization trainingX trainingY 0.05 10000
 
 let points = (x1, x2) ||> Array.map2 (fun x y -> (x, y))
 Chart.Combine(

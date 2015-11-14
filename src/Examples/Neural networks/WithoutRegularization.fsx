@@ -45,9 +45,9 @@ let trainingY = [| for i in 0 .. trainingX.RowCount - 1 do
                 |] |> DenseMatrix.OfRowArrays
 
 // Initialize theta matrices with random values; we will use a neural network with one hidden layer
-let thetas: Matrix<_> list = [ DenseMatrix.randomStandard<float> 3 3; DenseMatrix.randomStandard<float> 4 4 ]
+let thetas: Matrix<float> list = [ DenseMatrix.randomStandard<float> 3 3; DenseMatrix.randomStandard<float> 4 4 ]
 
-let fit = NeuralNetworks.train trainingX trainingY thetas 0.1 2000 Optimization.Regularization.Without
+let fit = NeuralNetworks.train Optimization.Regularization.Without trainingX trainingY thetas 0.1 2000
 
 // New input samples we need to classify
 let X = [|

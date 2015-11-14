@@ -37,7 +37,8 @@ let trainingY = [| for i in 0 .. length - 1 do
                    if (trainingX.[i, 1] + trainingX.[i, 2]) >= 1.0 then yield 1.0
                    else yield 0.0 |] |> DenseVector.OfArray
 
-let fit = LogisticRegression.fitWithGradientDescent trainingX trainingY 0.05 5000 Optimization.Regularization.Without
+let logisticRegressionWithoutRegularization = LogisticRegression.fitWithGradientDescent Optimization.Regularization.Without Optimization.GradientDescent.Standard
+let fit = logisticRegressionWithoutRegularization trainingX trainingY 0.05 5000 
 
 // Predict output (it should be 1)
 let input = matrix([ [ 1.0; 3.0; 3.0 ] ])

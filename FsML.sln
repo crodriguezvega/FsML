@@ -1,13 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio Express 2013 for Windows Desktop
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{99998F8E-0218-4A24-B97E-2DE7F6143C54}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Linear regression", "Linear regression", "{193AD9F0-38F1-43C4-B40C-220FCB74A697}"
 	ProjectSection(SolutionItems) = preProject
-		src\Examples\Linear regression\WithGradientDescent.fsx = src\Examples\Linear regression\WithGradientDescent.fsx
 		src\Examples\Linear regression\WithNormalEquation.fsx = src\Examples\Linear regression\WithNormalEquation.fsx
 		src\Examples\Linear regression\WithPolynomialFeatures.fsx = src\Examples\Linear regression\WithPolynomialFeatures.fsx
+		src\Examples\Linear regression\WithStandardGradientDescent.fsx = src\Examples\Linear regression\WithStandardGradientDescent.fsx
+		src\Examples\Linear regression\WithStochasticGradientDescent.fsx = src\Examples\Linear regression\WithStochasticGradientDescent.fsx
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Logistic regression", "Logistic regression", "{765777A8-BE63-49E6-B967-8C8DA956CE19}"
@@ -28,8 +31,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsML.Tests", "src\FsML.Test
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "K-means", "K-means", "{89518C3E-A1FE-4323-B619-CF5CBCD98D73}"
 	ProjectSection(SolutionItems) = preProject
-		src\Examples\K-means\WithSpecificInitialCentroids.fsx = src\Examples\K-means\WithSpecificInitialCentroids.fsx
 		src\Examples\K-means\WithRandomInitialCentroids.fsx = src\Examples\K-means\WithRandomInitialCentroids.fsx
+		src\Examples\K-means\WithSpecificInitialCentroids.fsx = src\Examples\K-means\WithSpecificInitialCentroids.fsx
 	EndProjectSection
 EndProject
 Global

@@ -44,7 +44,7 @@ let initialCentroids = [|
                          [| -0.25; -2.0 |]
                          [| -0.25; -0.25 |]
                          [| -0.25; 1.5 |]
-                       |] |> DenseMatrix.OfRowArrays |> Matrix.toRowSeq
+                       |] |> DenseMatrix.OfRowArrays |> Matrix.toRowSeq |> List.ofSeq
 
 // Find the the optimal centroid for each point
 let optimalCentroids = Kmeans.findOptimalCentroids points initialCentroids 100
