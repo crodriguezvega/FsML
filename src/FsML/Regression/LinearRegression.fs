@@ -39,9 +39,9 @@ module LinearRegression =
     | Optimization.GradientDescent.Stochastic ->
       let aux = 1.0
       let trainingSample = X.Row(0)
-      let trainingOutput = Y.At(0)
+      let outputSample = Y.At(0)
       let hypothesisOutput = hypothesys (DenseMatrix.OfRowVectors([trainingSample])) theta
-      let gradientWithoutRegularization = trainingSample.Multiply(hypothesisOutput.At(0) - trainingOutput)
+      let gradientWithoutRegularization = trainingSample.Multiply(hypothesisOutput.At(0) - outputSample)
       calculate aux gradientWithoutRegularization
 
   /// Fit with gradient descent
