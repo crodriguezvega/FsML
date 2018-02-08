@@ -1,4 +1,5 @@
 dist: trusty
+sudo: required
 language: fsharp
 dotnet: 2.0.0
 solution: FsML.sln
