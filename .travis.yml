@@ -6,4 +6,4 @@ dotnet: 2.1.2
 solution: FsML.sln
 script:
   - dotnet restore
-  - dotnet build -c Release src\FsML.Algorithms
+  - dotnet build -c Release src/FsML.Algorithms
