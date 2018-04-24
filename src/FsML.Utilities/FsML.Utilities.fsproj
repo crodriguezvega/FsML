@@ -13,12 +13,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Optimization.fs" />
-    <Compile Include="Regression\LinearRegression.fs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="MathNet.Numerics.FSharp" Version="4.0.0-beta06" />
+    <Compile Include="Builders.fs" />
+    <Compile Include="Types.fs" />
   </ItemGroup>
 
 </Project>

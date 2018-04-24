@@ -1,6 +1,5 @@
 ﻿namespace FsML.Algorithms.Regression
 
-open System
 open MathNet.Numerics
 open MathNet.Numerics.LinearAlgebra
 open MathNet.Numerics.LinearAlgebra.Double
@@ -9,22 +8,26 @@ open FsML.Algorithms
 
 module LinearRegression =
 
+  /// <summary>
   /// Hypothesis
-  let hypothesys (X: Matrix<float>) (theta: Vector<float>) = X * theta
+  /// </summary>
+  /// <param name="X">Matrix of observations (observation per row and feature per column)</param>
+  /// <param name="W">Vector of weights</param>
+  let hypothesys (X: Matrix<float>) (W: Vector<float>) = X * W
 
   /// <summary>
-  /// Cost function (residual sum of squares)
+  /// Cost function (Mean Square Error)
   /// </summary>
   /// <remarks>
-  /// - Without regularization: cost = (1 / (2 * m)) (Y - H * W) ^ 2
-  /// - With regularization:    cost = (1 / (2 * m)) ((Y - H * W) ^ 2 + λ * Σ(W[1:end] ^ 2)
+  /// - Without regularization: cost = (1 / (2 * m)) * (X * W - Y) ^ 2
+  /// - With regularization:    cost = (1 / (2 * m)) * ((X * W - Y) ^ 2 + λ * Σ(W[1:end] ^ 2)
   /// where m = number of observations
   ///       λ = regularization factor
   /// </remarks>
+  /// <param name="X">Matrix of observations (observation per row and feature per column)</param>
   /// <param name="Y">Vector of observed values</param>
-  /// <param name="H">Matrix of observations (observation per row and feature per column)</param>
   /// <param name="W">Vector of weights</param>
-  /// <returns>rss</returns>
+  /// <returns>MSE</returns>
   let costFunction regularization (X: Matrix<float>) (Y: Vector<float>) (W: Vector<float>) =
     let aux = (1.0 / (2.0 * float X.RowCount))
     let costWithoutRegularization = aux * ((hypothesys X W) - Y).PointwisePower(2.0).Sum()
@@ -35,26 +38,41 @@ module LinearRegression =
       let regularizationTerm = aux * lambda * W.SubVector(1, W.Count - 1).PointwisePower(2.0).Sum()
       costWithoutRegularization + regularizationTerm
 
+  /// <summary>
   /// Gradient of cost function
-  let gradientOfCostFunction regularization gradientDescent (X: Matrix<float>) (Y: Vector<float>) (theta: Vector<float>) =
+  /// </summary>
+  /// <remarks>
+  /// - For batch gradient descent:
+  ///   - Without regularization: gradient = (1 / m) * transpose(X) * (X * W - Y) 
+  ///   - With regularization:    gradient = (1 / m) * ((X * W - Y) ^ 2 + λ * [0, W[1:end]])
+  /// For stochastic gradient descent:
+  ///   - Without regularization: gradient = X[0,:] * (X[0,:] * W)
+  ///   - With regularization:    gradient = X[0,:] * (X[0,:] * W) + λ * [0, W[1:end]])
+  /// where m = number of observations
+  ///       λ = regularization factor
+  /// </remarks>
+  /// <param name="X">Matrix of observations (observation per row and feature per column)</param>
+  /// <param name="Y">Vector of observed values</param>
+  /// <param name="W">Vector of weights</param>
+  let gradientOfCostFunction regularization gradientDescent (X: Matrix<float>) (Y: Vector<float>) (W: Vector<float>) =
     let calculate aux (gradientWithoutRegularization: Vector<float>) =
       match regularization with
       | Optimization.Regularization.Without ->
         gradientWithoutRegularization
       | Optimization.Regularization.With(lambda) ->
-        let regularizationTerm = aux * lambda * (Array.append [|0.0|] (theta.SubVector(1, theta.Count - 1).ToArray()) |> DenseVector.OfArray)
+        let regularizationTerm = aux * lambda * (Array.append [|0.0|] (W.SubVector(1, W.Count - 1).ToArray()) |> DenseVector.OfArray)
         gradientWithoutRegularization + regularizationTerm
 
     match gradientDescent with
-    | Optimization.GradientDescent.Standard ->
+    | Optimization.GradientDescent.Batch ->
       let aux = 1.0 / float X.RowCount
-      let gradientWithoutRegularization = aux * X.TransposeThisAndMultiply((hypothesys X theta) - Y)
+      let gradientWithoutRegularization = aux * X.TransposeThisAndMultiply((hypothesys X W) - Y)
       calculate aux gradientWithoutRegularization
     | Optimization.GradientDescent.Stochastic ->
       let aux = 1.0
       let trainingSample = X.Row(0)
       let outputSample = Y.At(0)
-      let hypothesisOutput = hypothesys (DenseMatrix.OfRowVectors([trainingSample])) theta
+      let hypothesisOutput = hypothesys (DenseMatrix.OfRowVectors([trainingSample])) W
       let gradientWithoutRegularization = trainingSample.Multiply(hypothesisOutput.At(0) - outputSample)
       calculate aux gradientWithoutRegularization
 
@@ -69,8 +87,8 @@ module LinearRegression =
   /// <param name="H">Matrix of observations (observation per row and feature per column)</param>
   /// <param name="W">Vector of weights</param>
   /// <returns>rss</returns>
-  let fitWithGradientDescent regularization gradientDescent (X: Matrix<float>) (Y: Vector<float>) learningRate numberOfiterations =
-    Optimization.gradientDescent regularization gradientDescent costFunction gradientOfCostFunction X Y learningRate numberOfiterations
+  let fitWithGradientDescent regularization gradientDescent (X: Matrix<float>) (Y: Vector<float>) =
+    Ok(Optimization.gradientDescent regularization gradientDescent costFunction gradientOfCostFunction X Y)
 
   /// <summary>
   /// Fit with normal equation

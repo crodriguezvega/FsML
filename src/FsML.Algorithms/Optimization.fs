@@ -12,45 +12,58 @@ module Optimization =
     | With of float
 
   type GradientDescent =
-    | Standard
+    | Batch
     | Stochastic
 
-  /// Standard gradient descent
-  let calculateThetaForStandardGradientDescent regularization gradientDescent
-                                               (gradientOfCostFunction: Regularization -> GradientDescent -> Matrix<float> -> Vector<float> -> Vector<float> -> Vector<float>)
-                                               X Y (beginTheta: Vector<float>) (learningRate: float) =
-    let gradient = gradientOfCostFunction regularization gradientDescent X Y beginTheta
-    beginTheta - gradient.Multiply(learningRate)
+  type GradientDescentParameters =
+    {
+      category: GradientDescent;
+      learningRate: float;
+      numberOfiterations: int
+    }
+  
+  type GradientOfCostFunction = Regularization -> GradientDescent -> Matrix<float> -> Vector<float> -> Vector<float> -> Vector<float>
 
-  /// Calculation of 
-  let calculateThetaForStochasticGradientDescent regularization gradientDescent gradientOfCostFunction (X: Matrix<float>) (Y: Vector<float>) beginTheta learningRate =
+  /// Batch gradient descent
+  let calculateWeightForStandardGradientDescent regularization
+                                                (gradientDescent: GradientDescentParameters)
+                                                (gradientOfCostFunction: GradientOfCostFunction)
+                                                X Y beginWeight =
+    let gradient = gradientOfCostFunction regularization gradientDescent.category X Y beginWeight
+    beginWeight - gradient.Multiply(gradientDescent.learningRate)
+
+  /// Stochastic gradient descent
+  let calculateWeightForStochasticGradientDescent regularization
+                                                  (gradientDescent: GradientDescentParameters)
+                                                  (gradientOfCostFunction: GradientOfCostFunction) 
+                                                  (X: Matrix<float>) (Y: Vector<float>) beginWeight =
     let trainingSamples = (List.ofSeq (X.EnumerateRows()))
     let outputSamples = List.ofArray (Y.ToArray())
     let rec loop beginTheta trainingSamples outputSamples =
       match trainingSamples, outputSamples with
       | [], [] -> beginTheta
       | headTrainingSamples :: tailTrainingSamples, headOutputSamples :: tailOutputSamples ->
-        let endTheta = beginTheta - learningRate * (gradientOfCostFunction regularization gradientDescent (DenseMatrix.OfRowVectors([headTrainingSamples])) (DenseVector.OfArray([|headOutputSamples|])) beginTheta)
+        let endTheta = beginTheta - gradientDescent.learningRate * (gradientOfCostFunction regularization gradientDescent.category (DenseMatrix.OfRowVectors([headTrainingSamples])) (DenseVector.OfArray([|headOutputSamples|])) beginWeight)
         loop endTheta tailTrainingSamples tailOutputSamples
       | _, _ -> failwith "Number of training samples does not match number of outputs"
-    loop beginTheta trainingSamples outputSamples
+    loop beginWeight trainingSamples outputSamples
 
   /// Gradient descent for linear and logistic regression
-  let gradientDescent regularization gradientDescent costFunction gradientOfCostFunction X Y learningRate numberOfIterations =
-    let rec loop i beginTheta costDifference =
-      let beginCost = costFunction regularization X Y beginTheta
+  let gradientDescent regularization (gradientDescent: GradientDescentParameters) costFunction gradientOfCostFunction X Y =
+    let rec loop i beginWeight costDifference =
+      let beginCost = costFunction regularization X Y beginWeight
       match i, costDifference with
-      | _, costDifference when (costDifference < 0.0 || Double.IsNaN(costDifference)) -> beginTheta
-      | 0, _ -> beginTheta
+      | _, costDifference when (costDifference < 0.0 || Double.IsNaN(costDifference)) -> beginWeight
+      | 0, _ -> beginWeight
       | _, _ ->
-        let endTheta = match gradientDescent with
-                       | Standard ->
-                         calculateThetaForStandardGradientDescent regularization gradientDescent gradientOfCostFunction X Y beginTheta learningRate
-                       | Stochastic ->
-                         calculateThetaForStochasticGradientDescent regularization gradientDescent gradientOfCostFunction X Y beginTheta learningRate
-        let endCost = costFunction regularization X Y endTheta
-        loop (i - 1) endTheta (beginCost - endCost)
-    loop numberOfIterations (DenseVector(X.ColumnCount)) 1.0
+        let endWeight = match gradientDescent.category with
+                        | Batch ->
+                          calculateWeightForStandardGradientDescent regularization gradientDescent gradientOfCostFunction X Y beginWeight
+                        | Stochastic ->
+                          calculateWeightForStochasticGradientDescent regularization gradientDescent gradientOfCostFunction X Y beginWeight
+        let endCost = costFunction regularization X Y endWeight
+        loop (i - 1) endWeight (beginCost - endCost)
+    loop gradientDescent.numberOfiterations (DenseVector(X.ColumnCount)) 1.0
 
   // Find a better place for this
   let scaling (X: Vector<float>) =
