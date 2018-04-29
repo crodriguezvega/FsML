@@ -2,7 +2,5 @@
 
 module Types =
 
-  type Result<'TSuccess,'TFailure> =
-    | Success of 'TSuccess
-    | Failure of 'TFailure
-
+  type ErrorResult =
+    | NumberTrainingSamplesMustEqualNumberOutputs

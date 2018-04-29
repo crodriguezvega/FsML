@@ -83,18 +83,17 @@ module LinearRegression =
   /// - If alpha too small -> slow convergence
   /// - If alpha too large -> may not converge
   /// </remarks>
+  /// <param name="X">Matrix of observations (observation per row and feature per column)</param>
   /// <param name="Y">Vector of observed values</param>
-  /// <param name="H">Matrix of observations (observation per row and feature per column)</param>
-  /// <param name="W">Vector of weights</param>
   /// <returns>rss</returns>
   let fitWithGradientDescent regularization gradientDescent (X: Matrix<float>) (Y: Vector<float>) =
-    Ok(Optimization.gradientDescent regularization gradientDescent costFunction gradientOfCostFunction X Y)
+    Optimization.gradientDescent regularization gradientDescent costFunction gradientOfCostFunction X Y
 
   /// <summary>
   /// Fit with normal equation
   /// </summary>
   /// <remarks>
-  /// - Without regularization: W = inverse(transpose(H) * H) * transpose(H) * Y
+  /// - Without regularization: W = inverse(Hᵀ  * H) * (Hᵀ) * Y
   /// - With regularization:    W = 
   /// </remarks>
   /// <param name="regularization">Regularization flag</param>
@@ -105,11 +104,11 @@ module LinearRegression =
     let mainTerm = H.TransposeThisAndMultiply H
     match regularization with
     | Optimization.Regularization.Without ->
-      (mainTerm.Inverse().TransposeAndMultiply H) * Y
+      Ok((mainTerm.Inverse().TransposeAndMultiply H) * Y)
     | Optimization.Regularization.With(lambda) ->
       let regularizationTerm = SparseMatrix.diag H.ColumnCount 1.0
       regularizationTerm.[0, 0] <- 0.0
-      ((mainTerm + lambda * regularizationTerm).Inverse().TransposeAndMultiply H) * Y
+      Ok(((mainTerm + lambda * regularizationTerm).Inverse().TransposeAndMultiply H) * Y)
 
   /// <summary>
   /// Predict
@@ -117,4 +116,4 @@ module LinearRegression =
   /// <param name="H">Matrix of observations (observation per row and feature per column)</param>
   /// <param name="W">Vector of weights</param>
   /// <returns>Vector of predictions</returns>
-  let predict (H: Matrix<float>) (W: Vector<float>) = hypothesys H W
+  let predict (H: Matrix<float>) (W: Vector<float>) = Ok(hypothesys H W)
