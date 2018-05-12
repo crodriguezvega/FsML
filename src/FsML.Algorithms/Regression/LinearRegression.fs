@@ -93,7 +93,7 @@ module LinearRegression =
   /// Fit with normal equation
   /// </summary>
   /// <remarks>
-  /// - Without regularization: W = inverse(Hᵀ  * H) * (Hᵀ) * Y
+  /// - Without regularization: W = inverse(Hᵀ * H) * (Hᵀ) * Y
   /// - With regularization:    W = 
   /// </remarks>
   /// <param name="regularization">Regularization flag</param>
@@ -104,11 +104,11 @@ module LinearRegression =
     let mainTerm = H.TransposeThisAndMultiply H
     match regularization with
     | Optimization.Regularization.Without ->
-      Ok((mainTerm.Inverse().TransposeAndMultiply H) * Y)
+      Ok ((mainTerm.Inverse().TransposeAndMultiply H) * Y)
     | Optimization.Regularization.With(lambda) ->
       let regularizationTerm = SparseMatrix.diag H.ColumnCount 1.0
       regularizationTerm.[0, 0] <- 0.0
-      Ok(((mainTerm + lambda * regularizationTerm).Inverse().TransposeAndMultiply H) * Y)
+      Ok (((mainTerm + lambda * regularizationTerm).Inverse().TransposeAndMultiply H) * Y)
 
   /// <summary>
   /// Predict
@@ -116,4 +116,4 @@ module LinearRegression =
   /// <param name="H">Matrix of observations (observation per row and feature per column)</param>
   /// <param name="W">Vector of weights</param>
   /// <returns>Vector of predictions</returns>
-  let predict (H: Matrix<float>) (W: Vector<float>) = Ok(hypothesys H W)
+  let predict (H: Matrix<float>) (W: Vector<float>) = Ok (hypothesys H W)
