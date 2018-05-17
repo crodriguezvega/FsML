@@ -30,8 +30,8 @@ module WithGradientDescent =
 
     // Each row is a training sample
     let trainingX = [|
-                      Array.create x.Length 1.0 // Add intercept term
-                      x
+                        Array.create x.Length 1.0 // Add intercept term
+                        x
                     |] |> DenseMatrix.OfColumnArrays
 
     // Each element is the ouput value for each training sample

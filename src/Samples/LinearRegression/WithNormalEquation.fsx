@@ -29,8 +29,8 @@ module WithNormalEquation =
 
     // Each row is a training sample
     let trainingX = [|
-                      (Array.create x.Length 1.0) |> Array.toList |> vector
-                      (x |> DenseVector.OfArray).PointwisePower(2.0)
+                        (Array.create x.Length 1.0) |> Array.toList |> vector
+                        (x |> DenseVector.OfArray).PointwisePower(2.0)
                     |] |> DenseMatrix.OfColumnVectors
 
     // Each element is the ouput value for each training sample
