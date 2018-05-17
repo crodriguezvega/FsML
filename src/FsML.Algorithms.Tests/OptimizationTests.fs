@@ -14,7 +14,11 @@ module OptimizationTests =
             learningRate = 1.0;
             numberOfiterations = 10u
         }
-        let gradientOfCostFunctionStub (_: Regularization) (_: GradientDescent) (_: Matrix<float>) (_: Vector<float>) (_: Vector<float>) = [| 2.0; 3.0 |] |> Vector<float>.Build.DenseOfArray
+        let gradientOfCostFunctionStub (_: Regularization)
+                                       (_: GradientDescent)
+                                       (_: Matrix<float>)
+                                       (_: Vector<float>)
+                                       (_: Vector<float>) = [| 2.0; 3.0 |] |> Vector<float>.Build.DenseOfArray
         let X = [|
                     [| 0.0; 0.0|]
                     [| 0.0; 0.0|]
