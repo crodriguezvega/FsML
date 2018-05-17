@@ -2,5 +2,5 @@
 
 module Types =
 
-  type ErrorResult =
+    type ErrorResult =
     | NumberTrainingSamplesMustEqualNumberOutputs
