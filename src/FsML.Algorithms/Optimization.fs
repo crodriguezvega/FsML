@@ -24,7 +24,7 @@ module Optimization =
       learningRate: float;
       numberOfiterations: uint32
     }
-  
+
   type GradientOfCostFunction = Regularization -> GradientDescent -> Matrix<float> -> Vector<float> -> Vector<float> -> Vector<float>
 
   /// Batch gradient descent
@@ -48,9 +48,9 @@ module Optimization =
         match samples with
         | [] -> beginTheta
         | head :: tail -> 
-          let trainingSamples, outputSamples = head
+          let trainingSamples, outputSample = head
           let x = (DenseMatrix.OfRowVectors([trainingSamples]))
-          let y = (DenseVector.OfArray([|outputSamples|]))
+          let y = (DenseVector.OfArray([|outputSample|]))
           let gradient = gradientOfCostFunction regularization gradientDescent.category x y beginWeight
           let endTheta = beginTheta - gradientDescent.learningRate * gradient
           loop endTheta tail
@@ -59,7 +59,8 @@ module Optimization =
       Ok (loop beginWeight samples)
 
   /// Gradient descent for linear and logistic regression
-  let gradientDescent regularization (gradientDescent: GradientDescentParameters) costFunction gradientOfCostFunction (X: Matrix<float>) Y =
+  let gradientDescent regularization (gradientDescent: GradientDescentParameters)
+                      costFunction gradientOfCostFunction (X: Matrix<float>) Y =
     let mutable costDifference = 1.0
     let mutable weight = Vector<float>.Build.Dense(X.ColumnCount)
     let mutable iteration = gradientDescent.numberOfiterations
@@ -70,34 +71,18 @@ module Optimization =
       | Batch -> calculateWeightWithBGD regularization gradientDescent gradientOfCostFunction X Y
       | Stochastic -> calculateWeightWithSGD regularization gradientDescent gradientOfCostFunction X Y
 
-    let guard () = costDifference < 0.0 || Double.IsNaN(costDifference) || iteration = 0u
+    let guard () = not (costDifference < 0.0 || Double.IsNaN(costDifference) || iteration = 0u)
     Either.either {
       while guard () do
         let beginCost = costOperation weight
         let! result = gradientDescentOperation weight
         weight <- result
         let endCost = costOperation weight
-        costDifference <- endCost - beginCost
+        costDifference <- beginCost - endCost
         iteration <- iteration - 1u
       return weight
     }
 
-  (*
-    let rec loop (i: uint32) beginWeight costDifference =
-      let beginCost = costFunction regularization X Y beginWeight
-      match i, costDifference with
-      | _, costDifference when (costDifference < 0.0 || Double.IsNaN(costDifference)) -> beginWeight
-      | 0u, _ -> beginWeight
-      | _, _ ->
-        let endWeight = match gradientDescent.category with
-          | Batch -> calculateWeightWithBGD regularization gradientDescent gradientOfCostFunction X Y beginWeight
-          | Stochastic -> calculateWeightWithSGD regularization gradientDescent gradientOfCostFunction X Y beginWeight
-
-        let endCost = costFunction regularization X Y endWeight
-        loop (i - 1u) endWeight (beginCost - endCost)
-
-    loop gradientDescent.numberOfiterations (DenseVector(X.ColumnCount)) 1.0
- *)
   // Find a better place for this
   let scaling (X: Vector<float>) =
     let mean = Statistics.Mean X
