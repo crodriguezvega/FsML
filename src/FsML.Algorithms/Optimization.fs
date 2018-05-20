@@ -6,6 +6,7 @@ open MathNet.Numerics.LinearAlgebra
 open MathNet.Numerics.LinearAlgebra.Double
 
 open FsML.Utilities
+open FsML.Utilities.Types
 open FsML.Utilities.Builders
 
 module Optimization =
@@ -24,38 +25,42 @@ module Optimization =
         numberOfiterations: uint32
     }
 
-    type GradientOfCostFunction = Regularization -> GradientDescent -> Matrix<float> -> Vector<float> -> Vector<float> -> Vector<float>
+    type GradientOfCostFunction = Regularization -> GradientDescent -> Matrix<float> -> Vector<float> -> Vector<float> -> Result<Vector<float>, ErrorResult>
 
     /// Batch gradient descent
     let calculateWeightWithBGD regularization (gradientDescent: GradientDescentParameters)
                                (gradientOfCostFunction: GradientOfCostFunction)
                                X Y beginWeight =
-        let gradient = gradientOfCostFunction regularization gradientDescent.category X Y beginWeight
-        Ok (beginWeight - gradient.Multiply(gradientDescent.learningRate))
+        Either.either {
+            let! gradient = gradientOfCostFunction regularization gradientDescent.category X Y beginWeight
+            return (beginWeight - gradient.Multiply(gradientDescent.learningRate))
+        }
 
     /// Stochastic gradient descent
     let calculateWeightWithSGD regularization
                                (gradientDescent: GradientDescentParameters)
                                (gradientOfCostFunction: GradientOfCostFunction) 
                                (X: Matrix<float>) (Y: Vector<float>) beginWeight =
-        let trainingSamples = (List.ofSeq (X.EnumerateRows()))
-        let outputSamples = List.ofArray (Y.ToArray())
-        if (trainingSamples.Length <> outputSamples.Length) then
-            Error Types.NumberTrainingSamplesMustEqualNumberOutputs
-        else
-            let rec loop beginTheta samples =
+        if not (X.RowCount > 0 && Y.Count > 0 && X.RowCount = Y.Count) then
+            Error WrongDimensions
+        else 
+            let trainingSamples = (List.ofSeq (X.EnumerateRows()))
+            let outputSamples = List.ofArray (Y.ToArray())
+            let rec loop beginWeight samples =
                 match samples with
-                | [] -> beginTheta
+                | [] -> Ok beginWeight
                 | head :: tail -> 
                     let trainingSamples, outputSample = head
                     let x = (DenseMatrix.OfRowVectors([trainingSamples]))
                     let y = (DenseVector.OfArray([|outputSample|]))
-                    let gradient = gradientOfCostFunction regularization gradientDescent.category x y beginWeight
-                    let endTheta = beginTheta - gradientDescent.learningRate * gradient
-                    loop endTheta tail
+                    Either.either {
+                        let! gradient = gradientOfCostFunction regularization gradientDescent.category x y beginWeight
+                        let endWeight = beginWeight - gradientDescent.learningRate * gradient
+                        return! loop endWeight tail
+                    }
 
             let samples = List.zip trainingSamples outputSamples
-            Ok (loop beginWeight samples)
+            loop beginWeight samples
 
     /// Gradient descent for linear and logistic regression
     let gradientDescent regularization (gradientDescent: GradientDescentParameters)
@@ -63,20 +68,20 @@ module Optimization =
         let mutable costDifference = 1.0
         let mutable weight = Vector<float>.Build.Dense(X.ColumnCount)
         let mutable iteration = gradientDescent.numberOfiterations
-
-        let costOperation = costFunction regularization X Y
-        let gradientDescentOperation =
-            match gradientDescent.category with
-            | Batch -> calculateWeightWithBGD regularization gradientDescent gradientOfCostFunction X Y
-            | Stochastic -> calculateWeightWithSGD regularization gradientDescent gradientOfCostFunction X Y
-
         let guard () = not (costDifference < 0.0 || Double.IsNaN(costDifference) || iteration = 0u)
+
         Either.either {
+            let costOperation = costFunction regularization X Y
+            let gradientDescentOperation =
+                match gradientDescent.category with
+                | Batch -> calculateWeightWithBGD regularization gradientDescent gradientOfCostFunction X Y
+                | Stochastic -> calculateWeightWithSGD regularization gradientDescent gradientOfCostFunction X Y
+
             while guard () do
-                let beginCost = costOperation weight
+                let! beginCost = costOperation weight
                 let! result = gradientDescentOperation weight
                 weight <- result
-                let endCost = costOperation weight
+                let! endCost = costOperation weight
                 costDifference <- beginCost - endCost
                 iteration <- iteration - 1u
             return weight

@@ -3,4 +3,4 @@
 module Types =
 
     type ErrorResult =
-    | NumberTrainingSamplesMustEqualNumberOutputs
+    | WrongDimensions
