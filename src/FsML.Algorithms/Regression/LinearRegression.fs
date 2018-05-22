@@ -7,7 +7,7 @@ open MathNet.Numerics.LinearAlgebra.Double
 open FsML.Algorithms
 open FsML.Utilities.Types
 open FsML.Utilities.Builders
-        
+
 module LinearRegression =
 
     /// <summary>
@@ -16,8 +16,7 @@ module LinearRegression =
     /// <param name="H">Matrix of observations (observation per row and feature per column)</param>
     /// <param name="W">Vector of weights</param>
     let hypothesys (H: Matrix<float>) (W: Vector<float>) =
-        if not (H.RowCount > 0 && W.Count > 0 && H.RowCount = W.Count) then
-            Error WrongDimensions
+        if not (H.RowCount > 0 && W.Count > 0 && H.ColumnCount = W.Count) then Error WrongDimensions
         else Ok (H * W)
 
     /// <summary>
@@ -34,7 +33,7 @@ module LinearRegression =
     /// <param name="W">Vector of weights</param>
     /// <returns>MSE</returns>
     let costFunction regularization (H: Matrix<float>) (Y: Vector<float>) (W: Vector<float>) =
-        if not (H.RowCount > 0 && Y.Count > 0 && W.Count > 0 && H.RowCount = Y.Count && H.RowCount = W.Count) then
+        if not (H.RowCount > 0 && Y.Count > 0 && W.Count > 0 && H.RowCount = Y.Count && H.ColumnCount = W.Count) then
             Error WrongDimensions
         else
             let aux = (1.0 / (2.0 * float H.RowCount))
@@ -42,11 +41,11 @@ module LinearRegression =
                 let! hypothesysOutput = hypothesys H W
                 let costWithoutRegularization = aux * (hypothesysOutput - Y).PointwisePower(2.0).Sum()
                 return match regularization with
-                       | Optimization.Regularization.Without ->
-                           costWithoutRegularization
-                       | Optimization.Regularization.With(lambda) ->
-                           let regularizationTerm = aux * lambda * W.SubVector(1, W.Count - 1).PointwisePower(2.0).Sum()
-                           costWithoutRegularization + regularizationTerm
+                      | Optimization.Regularization.Without ->
+                          costWithoutRegularization
+                      | Optimization.Regularization.With(lambda) ->
+                          let regularizationTerm = aux * lambda * W.SubVector(1, W.Count - 1).PointwisePower(2.0).Sum()
+                          costWithoutRegularization + regularizationTerm
             }
 
     /// <summary>
@@ -54,11 +53,11 @@ module LinearRegression =
     /// </summary>
     /// <remarks>
     /// - For batch gradient descent:
-    ///   - Without regularization: gradient = (1 / m) * transpose(H) * (H * W - Y) 
-    ///   - With regularization:    gradient = (1 / m) * ((H * W - Y) ^ 2 + λ * [0, W[1:end]])
+    ///   - Without regularization: gradient = (1 / m) * (Hᵀ) * (H * W - Y)
+    ///   - With regularization:    gradient = (1 / m) * ((Hᵀ) * (H * W - Y) + λ * [0, W[1:end]])
     /// For stochastic gradient descent:
-    ///   - Without regularization: gradient = H[0,:] * (H[0,:] * W)
-    ///   - With regularization:    gradient = H[0,:] * (H[0,:] * W) + λ * [0, W[1:end]])
+    ///   - Without regularization: gradient = H[0,:] * ((H[0,:] * W)[0] - Y[0])
+    ///   - With regularization:    gradient = H[0,:] * ((H[0,:] * W)[0] - Y[0] + λ * [0, W[1:end]])
     /// where m = number of observations
     ///       λ = regularization factor
     /// </remarks>
@@ -66,7 +65,7 @@ module LinearRegression =
     /// <param name="Y">Vector of observed values</param>
     /// <param name="W">Vector of weights</param>
     let gradientOfCostFunction regularization gradientDescent (H: Matrix<float>) (Y: Vector<float>) (W: Vector<float>) =
-        if not (H.RowCount > 0 && Y.Count > 0 && W.Count > 0 && H.RowCount = Y.Count && H.RowCount = W.Count) then
+        if not (H.RowCount > 0 && Y.Count > 0 && W.Count > 0 && H.RowCount = Y.Count && H.ColumnCount = W.Count) then
             Error WrongDimensions
         else
             let calculate aux (gradientWithoutRegularization: Vector<float>) =
@@ -135,4 +134,4 @@ module LinearRegression =
     /// <param name="H">Matrix of observations (observation per row and feature per column)</param>
     /// <param name="W">Vector of weights</param>
     /// <returns>Vector of predictions</returns>
-    let predict (H: Matrix<float>) (W: Vector<float>) = Ok (hypothesys H W)
+    let predict (H: Matrix<float>) (W: Vector<float>) = hypothesys H W
