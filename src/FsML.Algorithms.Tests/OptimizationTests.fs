@@ -4,56 +4,32 @@ open Xunit
 open MathNet.Numerics.LinearAlgebra
 
 open FsML.Algorithms.Optimization
+open FsML.Common.Types
 
 module OptimizationTests =
 
     [<Fact>]
-    let ``Can calculate weight for batch gradient descent`` () =
-        let gradientDescentParameters = {
+    let ``Cannot execute gradient descent if number of rows of X and length of Y are not the same`` () =
+        let regularization = Regularization.Without
+        let parameters = {
             category = GradientDescent.Batch;
-            learningRate = 1.0;
-            numberOfiterations = 10u
+            learningRate = 0.0;
+            numberOfIterations = 0u
         }
-        let gradientOfCostFunctionStub (_: Regularization)
-                                       (_: GradientDescent)
-                                       (_: Matrix<float>)
-                                       (_: Vector<float>)
-                                       (_: Vector<float>) = [| 2.0; 3.0 |] |> Vector<float>.Build.DenseOfArray |> Ok
-        let X = [|
-                    [| 0.0; 0.0|]
-                    [| 0.0; 0.0|]
-                |] |>Matrix<float>.Build.DenseOfRowArrays
-        let Y = [| 0.0; 0.0 |] |> Vector<float>.Build.DenseOfArray
-        let beginWeight = [| 3.0; 2.0 |] |> Vector<float>.Build.DenseOfArray
+        let costFunction (_: Regularization)
+                         (_: Matrix<float>)
+                         (_: Vector<float>)
+                         (_: Vector<float>) = Ok (0.0)
+        let gradientOfCostFunction (_: Regularization)
+                                   (_: GradientDescent)
+                                   (_: Matrix<float>)
+                                   (_: Vector<float>)
+                                   (_: Vector<float>) = Vector<double>.Build.Random(2)
 
-        let result = calculateWeightWithBGD Regularization.Without gradientDescentParameters gradientOfCostFunctionStub X Y beginWeight
+        let X = Matrix<double>.Build.Random(2, 1)
+        let Y = Vector<double>.Build.Random(3)
+
+        let result = gradientDescent regularization parameters costFunction gradientOfCostFunction X Y
         match result with
-        | Error e -> Assert.True(false)
-        | Ok weight -> Assert.Equal(1.0, weight.At(0))
-                       Assert.Equal(-1.0, weight.At(1))
-
-    [<Fact>]
-    let ``Cannot calculate weight for batch gradient descent`` () =
-        let gradientDescentParameters = {
-            category = GradientDescent.Batch;
-            learningRate = 1.0;
-            numberOfiterations = 10u
-        }
-        let gradientOfCostFunctionStub (_: Regularization)
-                                       (_: GradientDescent)
-                                       (_: Matrix<float>)
-                                       (_: Vector<float>)
-                                       (_: Vector<float>) = [| 2.0; 3.0 |] |> Vector<float>.Build.DenseOfArray |> Ok
-        let X = [|
-                    [| 0.0; 0.0|]
-                    [| 0.0; 0.0|]
-                |] |>Matrix<float>.Build.DenseOfRowArrays
-        let Y = [| 0.0; 0.0 |] |> Vector<float>.Build.DenseOfArray
-        let beginWeight = [| 3.0; 2.0 |] |> Vector<float>.Build.DenseOfArray
-
-        let result = calculateWeightWithBGD Regularization.Without gradientDescentParameters gradientOfCostFunctionStub X Y beginWeight
-        match result with
-        | Error e -> Assert.True(false)
-        | Ok weight -> Assert.Equal(1.0, weight.At(0))
-                       Assert.Equal(-1.0, weight.At(1))
-
+        | Error (InvalidDimensions _) -> Assert.True(true)
+        | _ -> Assert.True(false)

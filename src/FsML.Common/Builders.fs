@@ -1,4 +1,4 @@
-﻿namespace FsML.Utilities
+﻿namespace FsML.Common
 
 module Builders =
 

@@ -38,7 +38,7 @@ module WithGradientDescent =
     let trainingY = y |> DenseVector.OfArray
 
     let fit: Result<Vector<float>, ErrorResult> = Either.either {
-        let gdParameters = { category = Optimization.GradientDescent.Batch; learningRate = 0.01; numberOfIterations = 1500u }
+        let gdParameters = { category = Optimization.GradientDescent.Stochastic; learningRate = 0.01; numberOfIterations = 1500u }
         let linearRegressionWithBGD = LinearRegression.fitWithGradientDescent Optimization.Regularization.Without gdParameters
         let! fit = linearRegressionWithBGD trainingX trainingY
         return fit

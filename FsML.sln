@@ -4,7 +4,7 @@ VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsML.Algorithms", "src\FsML.Algorithms\FsML.Algorithms.fsproj", "{37EBD46A-E7D8-4F15-AA95-D520E7EA985D}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsML.Utilities", "src\FsML.Utilities\FsML.Utilities.fsproj", "{F74E3AA7-6814-4A1C-88BC-10E07D35BD09}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsML.Common", "src\FsML.Common\FsML.Common.fsproj", "{F74E3AA7-6814-4A1C-88BC-10E07D35BD09}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{DC835A52-8635-49F5-B50A-6A27C972304A}"
 EndProject
@@ -12,9 +12,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LinearRegression", "LinearR
 	ProjectSection(SolutionItems) = preProject
 		src\Samples\LinearRegression\WithBatchGradientDescent.fsx = src\Samples\LinearRegression\WithBatchGradientDescent.fsx
 		src\Samples\LinearRegression\WithNormalEquation.fsx = src\Samples\LinearRegression\WithNormalEquation.fsx
+		src\Samples\LinearRegression\WithPolynomialFeatures.fsx = src\Samples\LinearRegression\WithPolynomialFeatures.fsx
+		src\Samples\LinearRegression\WithStochasticGradientDescent.fsx = src\Samples\LinearRegression\WithStochasticGradientDescent.fsx
 	EndProjectSection
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsML.Algorithms.Tests", "src\FsML.Algorithms.Tests\FsML.Algorithms.Tests.fsproj", "{2A8D3D2B-4843-49C1-B16B-E789FA530CBE}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsML.Common.Tests", "src\FsML.Common.Tests\FsML.Common.Tests.fsproj", "{8C38BB6A-6D07-44EC-A120-6151B9447B26}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,6 +38,10 @@ Global
 		{2A8D3D2B-4843-49C1-B16B-E789FA530CBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A8D3D2B-4843-49C1-B16B-E789FA530CBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A8D3D2B-4843-49C1-B16B-E789FA530CBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C38BB6A-6D07-44EC-A120-6151B9447B26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C38BB6A-6D07-44EC-A120-6151B9447B26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C38BB6A-6D07-44EC-A120-6151B9447B26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C38BB6A-6D07-44EC-A120-6151B9447B26}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

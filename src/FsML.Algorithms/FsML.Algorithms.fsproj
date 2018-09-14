@@ -75,8 +75,8 @@
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FsML.Utilities\FsML.Utilities.fsproj">
-      <Name>FsML.Utilities</Name>
+    <ProjectReference Include="..\FsML.Common\FsML.Common.fsproj">
+      <Name>FsML.Common</Name>
       <Project>{f74e3aa7-6814-4a1c-88bc-10e07d35bd09}</Project>
       <Private>True</Private>
     </ProjectReference>

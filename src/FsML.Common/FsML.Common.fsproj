@@ -7,31 +7,31 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>f74e3aa7-6814-4a1c-88bc-10e07d35bd09</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>FsML.Utilities</RootNamespace>
-    <AssemblyName>FsML.Utilities</AssemblyName>
+    <RootNamespace>FsML.Common</RootNamespace>
+    <AssemblyName>FsML.Common</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFSharpCoreVersion>4.4.1.0</TargetFSharpCoreVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Name>FsML.Utilities</Name>
+    <Name>FsML.Common</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <Tailcalls>false</Tailcalls>
-    <OutputPath>..\..\build\Debug\FsML.Utilities</OutputPath>
+    <OutputPath>..\..\build\Debug\FsML.Common</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>..\..\build\Debug\FsML.Utilities\FsML.Utilities.XML</DocumentationFile>
+    <DocumentationFile>..\..\build\Debug\FsML.Common\FsML.Common.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <Tailcalls>true</Tailcalls>
-    <OutputPath>..\..\build\Release\FsML.Utilities</OutputPath>
+    <OutputPath>..\..\build\Release\FsML.Common</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>..\..\build\Release\FsML.Utilities\FsML.Utilities.XML</DocumentationFile>
+    <DocumentationFile>..\..\build\Release\FsML.Common\FsML.Common.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
@@ -54,15 +54,20 @@
     <Compile Include="Builders.fs" />
     <Compile Include="Types.fs" />
     <Content Include="packages.config" />
+    <Compile Include="Utils.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">
       <HintPath>..\..\packages\FSharp.Core.4.3.4\lib\net45\FSharp.Core.dll</HintPath>
     </Reference>
+    <Reference Include="MathNet.Numerics">
+      <HintPath>..\..\packages\MathNet.Numerics.4.4.1\lib\net461\MathNet.Numerics.dll</HintPath>
+    </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
