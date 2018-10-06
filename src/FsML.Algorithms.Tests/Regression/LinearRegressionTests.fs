@@ -8,7 +8,7 @@ open MathNet.Numerics.LinearAlgebra.Double
 
 open FsML.Algorithms
 open FsML.Algorithms.Optimization
-open FsML.Algorithms.Regression
+open FsML.Algorithms.Regression.LinearRegression
 open FsML.Common.Builders
 open FsML.Common.Types
 
@@ -38,13 +38,13 @@ module LinearRegressionTests =
         let epsilon = 0.5
 
         let fit: Result<Vector<float>, ErrorResult> = Either.either {
-            let! fit = LinearRegression.fitWithNormalEquation Optimization.Regularization.Without trainingX trainingY
+            let! fit = fitWithNormalEquation Optimization.Regularization.Without trainingX trainingY
             return fit
         }
 
         match fit with
         | Error _ -> false
-        | Ok fit -> match LinearRegression.costFunction Optimization.Regularization.Without trainingX trainingY fit with
+        | Ok fit -> match costFunction Optimization.Regularization.Without trainingX trainingY fit with
                     | Error _ -> false
                     | Ok cost -> cost < 1.0
 
@@ -54,14 +54,14 @@ module LinearRegressionTests =
 
         let fit: Result<Vector<float>, ErrorResult> = Either.either {
             let gdParameters = { category = Optimization.GradientDescent.Batch; learningRate = 0.01; numberOfIterations = 5000u }
-            let linearRegressionWithBGD = LinearRegression.fitWithGradientDescent Optimization.Regularization.Without gdParameters
+            let linearRegressionWithBGD = fitWithGradientDescent Optimization.Regularization.Without gdParameters
             let! fit = linearRegressionWithBGD trainingX trainingY
             return fit
         }
 
         match fit with
         | Error _ -> false
-        | Ok fit -> match LinearRegression.costFunction Optimization.Regularization.Without trainingX trainingY fit with
+        | Ok fit -> match costFunction Optimization.Regularization.Without trainingX trainingY fit with
                     | Error _ -> false
                     | Ok cost -> cost < 1.0
 
@@ -69,13 +69,13 @@ module LinearRegressionTests =
     let ``Can calculate regression line using stochastic gradient descent`` ({ TrainingX = trainingX; TrainingY = trainingY }) =
         let fit: Result<Vector<float>, ErrorResult> = Either.either {
             let gdParameters = { category = Optimization.GradientDescent.Batch; learningRate = 0.01; numberOfIterations = 5000u }
-            let linearRegressionWithBGD = LinearRegression.fitWithGradientDescent Optimization.Regularization.Without gdParameters
+            let linearRegressionWithBGD = fitWithGradientDescent Optimization.Regularization.Without gdParameters
             let! fit = linearRegressionWithBGD trainingX trainingY
             return fit
         }
 
         match fit with
         | Error _ -> false
-        | Ok fit -> match LinearRegression.costFunction Optimization.Regularization.Without trainingX trainingY fit with
+        | Ok fit -> match costFunction Optimization.Regularization.Without trainingX trainingY fit with
                     | Error _ -> false
                     | Ok cost -> cost < 1.0

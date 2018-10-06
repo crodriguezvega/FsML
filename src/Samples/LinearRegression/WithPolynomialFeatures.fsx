@@ -17,7 +17,7 @@ open MathNet.Numerics.LinearAlgebra
 open MathNet.Numerics.LinearAlgebra.Double
 
 open FsML.Algorithms
-open FsML.Algorithms.Regression
+open FsML.Algorithms.Regression.LinearRegression
 open FsML.Common.Builders
 open FsML.Common.Types
 
@@ -39,7 +39,7 @@ module WithPolynomialFeatures =
     let trainingY = y |> DenseVector.OfArray
 
     let fit: Result<Vector<float>, ErrorResult> = Either.either {
-        let! fit = LinearRegression.fitWithNormalEquation Optimization.Regularization.Without trainingX trainingY
+        let! fit = fitWithNormalEquation Optimization.Regularization.Without trainingX trainingY
         return fit
     }
 

@@ -18,7 +18,7 @@ open MathNet.Numerics.LinearAlgebra.Double
 
 open FsML.Algorithms
 open FsML.Algorithms.Optimization
-open FsML.Algorithms.Regression
+open FsML.Algorithms.Regression.LinearRegression
 open FsML.Common.Builders
 open FsML.Common.Types
 
@@ -39,7 +39,7 @@ module WithGradientDescent =
 
     let fit: Result<Vector<float>, ErrorResult> = Either.either {
         let gdParameters = { category = Optimization.GradientDescent.Stochastic; learningRate = 0.01; numberOfIterations = 1500u }
-        let linearRegressionWithBGD = LinearRegression.fitWithGradientDescent Optimization.Regularization.Without gdParameters
+        let linearRegressionWithBGD = fitWithGradientDescent Optimization.Regularization.Without gdParameters
         let! fit = linearRegressionWithBGD trainingX trainingY
         return fit
     }
