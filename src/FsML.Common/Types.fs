@@ -2,6 +2,6 @@
 
 module Types =
 
-    type ErrorResult =
-    | InvalidValue of string
-    | InvalidDimensions of string
+  type ErrorResult =
+  | InvalidValue of string
+  | InvalidDimensions of string

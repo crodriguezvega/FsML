@@ -1,14 +1,17 @@
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsML.Algorithms", "src\FsML.Algorithms\FsML.Algorithms.fsproj", "{37EBD46A-E7D8-4F15-AA95-D520E7EA985D}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsML.Algorithms", "src\FsML.Algorithms\FsML.Algorithms.fsproj", "{995E5695-339C-442A-ABC7-D3FE99C3EE5F}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsML.Common", "src\FsML.Common\FsML.Common.fsproj", "{F74E3AA7-6814-4A1C-88BC-10E07D35BD09}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsML.Algorithms.Tests", "src\FsML.Algorithms.Tests\FsML.Algorithms.Tests.fsproj", "{EE288296-E178-4768-98F7-48F2B4B74757}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{DC835A52-8635-49F5-B50A-6A27C972304A}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsML.Common", "src\FsML.Common\FsML.Common.fsproj", "{ABE8286A-2698-413B-8590-475AB971BF85}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LinearRegression", "LinearRegression", "{BC9E7E87-3AD4-4829-A154-B26B232C85C6}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsML.Common.Tests", "src\FsML.Common.Tests\FsML.Common.Tests.fsproj", "{2DC73907-8206-4935-A581-4BCEEB4E6FC4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{90B5ACDA-B01B-4749-9056-86A4EE061022}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LinearRegression", "LinearRegression", "{96FDA1AD-9795-47CC-9616-7CC68F7FDC9E}"
 	ProjectSection(SolutionItems) = preProject
 		src\Samples\LinearRegression\WithBatchGradientDescent.fsx = src\Samples\LinearRegression\WithBatchGradientDescent.fsx
 		src\Samples\LinearRegression\WithNormalEquation.fsx = src\Samples\LinearRegression\WithNormalEquation.fsx
@@ -16,40 +19,34 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LinearRegression", "LinearR
 		src\Samples\LinearRegression\WithStochasticGradientDescent.fsx = src\Samples\LinearRegression\WithStochasticGradientDescent.fsx
 	EndProjectSection
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsML.Algorithms.Tests", "src\FsML.Algorithms.Tests\FsML.Algorithms.Tests.fsproj", "{2A8D3D2B-4843-49C1-B16B-E789FA530CBE}"
-EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsML.Common.Tests", "src\FsML.Common.Tests\FsML.Common.Tests.fsproj", "{8C38BB6A-6D07-44EC-A120-6151B9447B26}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{37EBD46A-E7D8-4F15-AA95-D520E7EA985D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{37EBD46A-E7D8-4F15-AA95-D520E7EA985D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{37EBD46A-E7D8-4F15-AA95-D520E7EA985D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{37EBD46A-E7D8-4F15-AA95-D520E7EA985D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F74E3AA7-6814-4A1C-88BC-10E07D35BD09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F74E3AA7-6814-4A1C-88BC-10E07D35BD09}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F74E3AA7-6814-4A1C-88BC-10E07D35BD09}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F74E3AA7-6814-4A1C-88BC-10E07D35BD09}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2A8D3D2B-4843-49C1-B16B-E789FA530CBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2A8D3D2B-4843-49C1-B16B-E789FA530CBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2A8D3D2B-4843-49C1-B16B-E789FA530CBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2A8D3D2B-4843-49C1-B16B-E789FA530CBE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8C38BB6A-6D07-44EC-A120-6151B9447B26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8C38BB6A-6D07-44EC-A120-6151B9447B26}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8C38BB6A-6D07-44EC-A120-6151B9447B26}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8C38BB6A-6D07-44EC-A120-6151B9447B26}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
+		{995E5695-339C-442A-ABC7-D3FE99C3EE5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{995E5695-339C-442A-ABC7-D3FE99C3EE5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{995E5695-339C-442A-ABC7-D3FE99C3EE5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{995E5695-339C-442A-ABC7-D3FE99C3EE5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE288296-E178-4768-98F7-48F2B4B74757}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE288296-E178-4768-98F7-48F2B4B74757}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE288296-E178-4768-98F7-48F2B4B74757}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE288296-E178-4768-98F7-48F2B4B74757}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABE8286A-2698-413B-8590-475AB971BF85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABE8286A-2698-413B-8590-475AB971BF85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABE8286A-2698-413B-8590-475AB971BF85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABE8286A-2698-413B-8590-475AB971BF85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DC73907-8206-4935-A581-4BCEEB4E6FC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DC73907-8206-4935-A581-4BCEEB4E6FC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DC73907-8206-4935-A581-4BCEEB4E6FC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DC73907-8206-4935-A581-4BCEEB4E6FC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E18B490-2DBB-43FB-8E4B-BDED33BDC79E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E18B490-2DBB-43FB-8E4B-BDED33BDC79E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E18B490-2DBB-43FB-8E4B-BDED33BDC79E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E18B490-2DBB-43FB-8E4B-BDED33BDC79E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{BC9E7E87-3AD4-4829-A154-B26B232C85C6} = {DC835A52-8635-49F5-B50A-6A27C972304A}
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {715BF40A-F07F-4FE0-8924-0DCA8F2FF4B9}
+		{96FDA1AD-9795-47CC-9616-7CC68F7FDC9E} = {90B5ACDA-B01B-4749-9056-86A4EE061022}
 	EndGlobalSection
 EndGlobal

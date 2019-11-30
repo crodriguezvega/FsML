@@ -1,17 +1,14 @@
-#I "../../../build/Debug/FsML.Algorithms"
-#I "../../../build/Debug/FsML.Common"
-#I "../../../packages/FSharp.Charting.0.91.1/lib/net45"
-#I "../../../packages/MathNet.Numerics.4.4.1/lib/net461"
-#I "../../../packages/MathNet.Numerics.FSharp.4.4.1/lib/net45"
+#I "/Users/carlosrodriguez-vega/.nuget/packages/xplot.plotly/3.0.1/lib/netstandard2.0"
+#I "/Users/carlosrodriguez-vega/.nuget/packages/mathnet.numerics/4.9.0/lib/netstandard2.0"
+#I "/Users/carlosrodriguez-vega/.nuget/packages/mathnet.numerics.fsharp/4.9.0/lib/netstandard2.0"
 
-#r "FsML.Algorithms.dll"
-#r "FsML.Common.dll"
-#r "FSharp.Charting.dll"
+#r "../../../build/Debug/netcoreapp3.0/FsML.Algorithms/FsML.Algorithms.dll"
+#r "../../../build/Debug/netcoreapp3.0/FsML.Common/FsML.Common.dll"
+#r "XPlot.Plotly.dll"
 #r "MathNet.Numerics.dll"
 #r "MathNet.Numerics.FSharp.dll"
-#r "System.Windows.Forms.DataVisualization.dll"
 
-open FSharp.Charting
+open XPlot.Plotly
 open MathNet.Numerics.Distributions
 open MathNet.Numerics.LinearAlgebra
 open MathNet.Numerics.LinearAlgebra.Double
@@ -24,28 +21,43 @@ open FsML.Common.Types
 
 module WithGradientDescent =
 
-    let normalDistribution = Normal.WithMeanVariance(0.0, 5.0)
-    let x = [| 1.0..1.0..10.0 |]
-    let y = x |> Array.map (fun x -> x + normalDistribution.Sample())
+  let normalDistribution = Normal.WithMeanVariance(0.0, 5.0)
+  let x = [| 1.0..1.0..10.0 |]
+  let y = x |> Array.map (fun x -> x + normalDistribution.Sample())
 
-    // Each row is a training sample
-    let trainingX = [|
-                        Array.create x.Length 1.0 // Add intercept term
-                        x
-                    |] |> DenseMatrix.OfColumnArrays
+  // Each row is a training sample
+  let trainingX = [|
+                    Array.create x.Length 1.0 // Add intercept term
+                    x
+                  |] |> DenseMatrix.OfColumnArrays
 
-    // Each element is the ouput value for each training sample
-    let trainingY = y |> DenseVector.OfArray
+  // Each element is the ouput value for each training sample
+  let trainingY = y |> DenseVector.OfArray
 
-    let fit: Result<Vector<float>, ErrorResult> = Either.either {
-        let gdParameters = { category = Optimization.GradientDescent.Batch; learningRate = 0.01; numberOfIterations = 1500u }
-        let linearRegressionWithBGD = fitWithGradientDescent Optimization.Regularization.Without gdParameters
-        let! fit = linearRegressionWithBGD trainingX trainingY
-        return fit
-    }
+  let fit: Result<Vector<float>, ErrorResult> = Either.either {
+    let gdParameters = { category = Optimization.GradientDescent.Batch; learningRate = 0.01; numberOfIterations = 1500u }
+    let linearRegressionWithBGD = fitWithGradientDescent Optimization.Regularization.Without gdParameters
+    let! fit = linearRegressionWithBGD trainingX trainingY
+    return fit
+  }
 
-    match fit with
-    | Error e -> printfn "No fit: %A" e
-    | Ok fit -> let chart = Chart.Combine([ Chart.Point ((x, y) ||> Array.map2 (fun x y -> (x, y)))
-                                            Chart.Line (x |> Array.map (fun x -> (x, fit.At(0) + fit.At(1) * x))) ])
-                chart.ShowChart() |> ignore
+  match fit with
+  | Error e -> printfn "No fit: %A" e
+  | Ok fit -> [
+                Scatter(
+                  x = x,
+                  y = y,
+                  mode = "markers",
+                  name = "Observed values"
+                );
+                Scatter(
+                  x = x,
+                  y = (x |> Array.map (fun x -> fit.At(0) + fit.At(1) * x)),
+                  mode = "lines",
+                  name = "Regression line"
+                )
+              ]
+              |> Chart.Plot
+              |> Chart.WithWidth 700
+              |> Chart.WithHeight 500
+              |> Chart.Show
