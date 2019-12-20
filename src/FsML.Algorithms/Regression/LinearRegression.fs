@@ -11,9 +11,10 @@ module LinearRegression =
   /// <summary>
   /// Hypothesis
   /// </summary>
-  /// <param name="H">Matrix of observations (observation per row and feature per column)</param>
+  /// <param name="H">Matrix of observations (observation per row and feature per column) (a.k.a. regressors)</param>
   /// <param name="W">Vector of weights</param>
-  let private hypothesys (H: Matrix<float>) (W: Vector<float>) = H * W
+  /// <returns>Vector of predictions</returns>
+  let private hypothesys (H: Regressors) (W: Weights) : Predictions = H * W
 
   /// <summary>
   /// Cost function (Mean Square Error)
@@ -24,11 +25,11 @@ module LinearRegression =
   /// where m = number of observations
   ///       λ = regularization factor
   /// </remarks>
-  /// <param name="H">Matrix of observations (observation per row and feature per column)</param>
-  /// <param name="Y">Vector of observed values</param>
+  /// <param name="H">Matrix of observations (observation per row and feature per column) (a.k.a. regressors)</param>
+  /// <param name="Y">Vector of observed values (a.k.a. regressand)</param>
   /// <param name="W">Vector of weights</param>
   /// <returns>MSE</returns>
-  let costFunction regularization (H: Matrix<float>) (Y: Vector<float>) (W: Vector<float>) =
+  let costFunction regularization (H: Regressors) (Y: Regressand) (W: Weights) : Result<MSE, ErrorResult> =
     if H.RowCount <> Y.Count then
       Error (InvalidDimensions "The number of observations and observed values must be the same")
     elif H.ColumnCount <> W.Count then
@@ -57,10 +58,10 @@ module LinearRegression =
   /// where m = number of observations
   ///       λ = regularization factor
   /// </remarks>
-  /// <param name="H">Matrix of observations (observation per row and feature per column)</param>
-  /// <param name="Y">Vector of observed values</param>
+  /// <param name="H">Matrix of observations (observation per row and feature per column) (a.k.a. regressors)</param>
+  /// <param name="Y">Vector of observed values (a.k.a. regressand)</param>
   /// <param name="W">Vector of weights</param>
-  let private gradientOfCostFunction regularization gradientDescent (H: Matrix<float>) (Y: Vector<float>) (W: Vector<float>) =
+  let private gradientOfCostFunction regularization gradientDescent (H: Regressors) (Y: Regressand) (W: Weights) : Vector<float> =
     let calculate aux (gradientWithoutRegularization: Vector<float>) =
       match regularization with
       | Optimization.Regularization.Without ->
@@ -90,10 +91,10 @@ module LinearRegression =
   /// - If alpha too small -> slow convergence
   /// - If alpha too large -> may not converge
   /// </remarks>
-  /// <param name="H">Matrix of observations (observation per row and feature per column)</param>
-  /// <param name="Y">Vector of observed values</param>
-  /// <returns>rss</returns>
-  let fitWithGradientDescent regularization gradientDescent (H: Matrix<float>) (Y: Vector<float>) =
+  /// <param name="H">Matrix of observations (observation per row and feature per column) (a.k.a. regressors)</param>
+  /// <param name="Y">Vector of observed values (a.k.a. regressand)</param>
+  /// <returns>Vector of weights</returns>
+  let fitWithGradientDescent regularization gradientDescent (H: Regressors) (Y: Regressand) : Result<Weights, ErrorResult> =
     if H.RowCount <> Y.Count then
       Error (InvalidDimensions "The number of observations and observed values must be the same")
     else
@@ -108,10 +109,10 @@ module LinearRegression =
   /// where λ = regularization factor
   /// </remarks>
   /// <param name="regularization">Regularization flag</param>
-  /// <param name="H">Matrix of observations (observation per row and feature per column)</param>
-  /// <param name="Y">Vector of observed values</param>
+  /// <param name="H">Matrix of observations (observation per row and feature per column) (a.k.a. regressors)</param>
+  /// <param name="Y">Vector of observed values (a.k.a. regressand)</param>
   /// <returns>Vector of weights</returns>
-  let fitWithNormalEquation regularization (H: Matrix<float>) (Y: Vector<float>) =
+  let fitWithNormalEquation regularization (H: Regressors) (Y: Regressand) : Result<Weights, ErrorResult> =
     if H.RowCount <> Y.Count then
       Error (InvalidDimensions "The number of observations and observed values must be the same")
     else
@@ -127,10 +128,10 @@ module LinearRegression =
   /// <summary>
   /// Predict
   /// </summary>
-  /// <param name="H">Matrix of observations (observation per row and feature per column)</param>
+  /// <param name="H">Matrix of observations (observation per row and feature per column) (a.k.a. regressors)</param>
   /// <param name="W">Vector of weights</param>
   /// <returns>Vector of predictions</returns>
-  let predict (H: Matrix<float>) (W: Vector<float>) =
+  let predict (H: Regressors) (W: Weights) : Result<Predictions, ErrorResult> =
     if H.ColumnCount <> W.Count then
       Error (InvalidDimensions "The number of observations and weights must be the same")
     else
@@ -147,11 +148,11 @@ module LinearRegression =
   /// where m = number of observed values
   ///       P = H * W
   /// </remarks>
-  /// <param name="H">Matrix of observations (observation per row and feature per column)</param>
-  /// <param name="Y">Vector of observed values</param>
+  /// <param name="H">Matrix of observations (observation per row and feature per column) (a.k.a. regressors)</param>
+  /// <param name="Y">Vector of observed values (a.k.a. regressand)</param>
   /// <param name="W">Vector of weights</param>
   /// <returns>R² value</returns>
-  let Rsquared (H: Matrix<float>) (Y: Vector<float>) (W: Vector<float>) =
+  let Rsquared (H: Regressors) (Y: Regressand) (W: Weights) : Result<RSquared, ErrorResult> =
     if H.RowCount <> Y.Count then
       Error (InvalidDimensions "The number of observations and observed values must be the same")
     elif H.ColumnCount <> W.Count then
@@ -177,11 +178,11 @@ module LinearRegression =
   /// where p = total number of features (not including the intercept term)
   ///       n = number of observations
   /// </remarks>
-  /// <param name="H">Matrix of observations (observation per row and feature per column)</param>
-  /// <param name="Y">Vector of observed values</param>
+  /// <param name="H">Matrix of observations (observation per row and feature per column) (a.k.a. regressors)</param>
+  /// <param name="Y">Vector of observed values (a.k.a. regressand)</param>
   /// <param name="W">Vector of weights</param>
   /// <returns>Adjusted R² value</returns>
-  let AdjustedRsquared (H: Matrix<float>) (Y: Vector<float>) (W: Vector<float>) =
+  let AdjustedRsquared (H: Regressors) (Y: Regressand) (W: Weights) : Result<AdjustedRSquared, ErrorResult> =
     let rSquared = Rsquared H Y W
     match rSquared with
     | Error e -> Error e

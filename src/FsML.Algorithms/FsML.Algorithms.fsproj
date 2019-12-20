@@ -6,6 +6,7 @@
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\..\build\Debug\netcoreapp3.0\FsML.Algorithms</OutputPath>
+    <DocumentationFile>..\..\build\Debug\netcoreapp3.0\FsML.Algorithms\FsML.Algorithms.XML</DocumentationFile>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -15,6 +16,7 @@
   <ItemGroup>
     <Compile Include="Optimization.fs" />
     <Compile Include="Regression\LinearRegression.fs" />
+    <Compile Include="Classification\LogisticRegression.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,6 +25,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Regression\" />
+    <Folder Include="Classification\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FsML.Common\FsML.Common.fsproj" />

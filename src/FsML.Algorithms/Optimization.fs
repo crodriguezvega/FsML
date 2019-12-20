@@ -23,29 +23,41 @@ module Optimization =
     numberOfIterations: uint32
   }
 
-  type GradientOfCostFunction = Regularization -> GradientDescent -> Matrix<float> -> Vector<float> -> Vector<float> -> Vector<float>
+  type GradientOfCostFunction = 
+    Regularization 
+      -> GradientDescent 
+      -> Matrix<float> 
+      -> Vector<float> 
+      -> Vector<float> 
+      -> Vector<float>
 
   /// <summary>
   /// Batch gradient descent
   /// </summary>
-  let private calculateWeightWithBGD regularization
-                                     (parameters: GradientDescentParameters)
-                                     (gradientOfCostFunction: GradientOfCostFunction)
-                                     X
-                                     Y
-                                     beginWeight =
-    let gradient = gradientOfCostFunction regularization parameters.category X Y beginWeight
-    (beginWeight - gradient.Multiply(parameters.learningRate))
+  let private calculateWeightWithBGD 
+    regularization
+    (parameters: GradientDescentParameters)
+    (gradientOfCostFunction: GradientOfCostFunction)
+    X
+    Y
+    initialWeight
+    : Vector<float> =
+
+    let gradient = gradientOfCostFunction regularization parameters.category X Y initialWeight
+    (initialWeight - gradient.Multiply(parameters.learningRate))
 
   /// <summary>
   /// Stochastic gradient descent
   /// </summary>
-  let private calculateWeightWithSGD regularization
-                                     (parameters: GradientDescentParameters)
-                                     (gradientOfCostFunction: GradientOfCostFunction) 
-                                     (X: Matrix<float>)
-                                     (Y: Vector<float>)
-                                     beginWeight =
+  let private calculateWeightWithSGD 
+    regularization
+    (parameters: GradientDescentParameters)
+    (gradientOfCostFunction: GradientOfCostFunction) 
+    (X: Matrix<float>)
+    (Y: Vector<float>)
+    beginWeight
+    : Vector<float> =
+
     let trainingSamples = (List.ofSeq (X.EnumerateRows()))
     let outputSamples = List.ofArray (Y.ToArray())
     let rec loop beginWeight samples =
@@ -65,12 +77,15 @@ module Optimization =
   /// <summary>
   /// Gradient descent
   /// </summary>
-  let gradientDescent regularization
-                      (parameters: GradientDescentParameters)
-                      costFunction
-                      gradientOfCostFunction
-                      (X: Matrix<float>)
-                      (Y: Vector<float>) =
+  let gradientDescent
+    regularization
+    (parameters: GradientDescentParameters)
+    costFunction
+    gradientOfCostFunction
+    (X: Matrix<float>)
+    (Y: Vector<float>)
+    : Result<Vector<float>, ErrorResult> =
+
     if X.RowCount <> Y.Count then
       Error (InvalidDimensions "The number of rows of X and the length of Y must be the same")
     elif parameters.learningRate <= 0.0 then

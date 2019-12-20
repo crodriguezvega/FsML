@@ -2,8 +2,8 @@
 #I "/Users/carlosrodriguez-vega/.nuget/packages/mathnet.numerics/4.9.0/lib/netstandard2.0"
 #I "/Users/carlosrodriguez-vega/.nuget/packages/mathnet.numerics.fsharp/4.9.0/lib/netstandard2.0"
 
-#r "../../../build/Debug/netcoreapp3.0/FsML.Algorithms/FsML.Algorithms.dll"
 #r "../../../build/Debug/netcoreapp3.0/FsML.Common/FsML.Common.dll"
+#r "../../../build/Debug/netcoreapp3.0/FsML.Algorithms/FsML.Algorithms.dll"
 #r "XPlot.Plotly.dll"
 #r "MathNet.Numerics.dll"
 #r "MathNet.Numerics.FSharp.dll"
