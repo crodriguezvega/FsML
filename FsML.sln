@@ -19,6 +19,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LinearRegression", "LinearR
 		src\Samples\LinearRegression\WithStochasticGradientDescent.fsx = src\Samples\LinearRegression\WithStochasticGradientDescent.fsx
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LogisticRegression", "LogisticRegression", "{96FDA8AD-6328-47CC-9616-7CC6ACDFDC9E}"
+	ProjectSection(SolutionItems) = preProject
+		src\Samples\LogisticRegression\WithRegularization.fsx = src\Samples\LogisticRegression\WithRegularization.fsx
+		src\Samples\LogisticRegression\WithoutRegularization.fsx = src\Samples\LogisticRegression\WithoutRegularization.fsx
+	EndProjectSection
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsML.Domain", "src\FsML.Domain\FsML.Domain.fsproj", "{B85F3A5D-84DB-438B-9B80-B1C986477929}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsML.Domain.Tests", "src\FsML.Domain.Tests\FsML.Domain.Tests.fsproj", "{1D6BE50F-EFFF-4C25-8F86-A70E88E862C5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,8 +55,17 @@ Global
 		{8E18B490-2DBB-43FB-8E4B-BDED33BDC79E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E18B490-2DBB-43FB-8E4B-BDED33BDC79E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E18B490-2DBB-43FB-8E4B-BDED33BDC79E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B85F3A5D-84DB-438B-9B80-B1C986477929}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B85F3A5D-84DB-438B-9B80-B1C986477929}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B85F3A5D-84DB-438B-9B80-B1C986477929}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B85F3A5D-84DB-438B-9B80-B1C986477929}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D6BE50F-EFFF-4C25-8F86-A70E88E862C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D6BE50F-EFFF-4C25-8F86-A70E88E862C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D6BE50F-EFFF-4C25-8F86-A70E88E862C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D6BE50F-EFFF-4C25-8F86-A70E88E862C5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{96FDA1AD-9795-47CC-9616-7CC68F7FDC9E} = {90B5ACDA-B01B-4749-9056-86A4EE061022}
+		{96FDA8AD-6328-47CC-9616-7CC6ACDFDC9E} = {90B5ACDA-B01B-4749-9056-86A4EE061022}
 	EndGlobalSection
 EndGlobal

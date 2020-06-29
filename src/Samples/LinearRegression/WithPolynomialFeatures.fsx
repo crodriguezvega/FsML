@@ -2,8 +2,9 @@
 #I "/Users/carlosrodriguez-vega/.nuget/packages/mathnet.numerics/4.9.0/lib/netstandard2.0"
 #I "/Users/carlosrodriguez-vega/.nuget/packages/mathnet.numerics.fsharp/4.9.0/lib/netstandard2.0"
 
-#r "../../../build/Debug/netcoreapp3.0/FsML.Algorithms/FsML.Algorithms.dll"
 #r "../../../build/Debug/netcoreapp3.0/FsML.Common/FsML.Common.dll"
+#r "../../../build/Debug/netcoreapp3.0/FsML.Domain/FsML.Domain.dll"
+#r "../../../build/Debug/netcoreapp3.0/FsML.Algorithms/FsML.Algorithms.dll"
 #r "XPlot.Plotly.dll"
 #r "MathNet.Numerics.dll"
 #r "MathNet.Numerics.FSharp.dll"
@@ -13,10 +14,10 @@ open MathNet.Numerics.Distributions
 open MathNet.Numerics.LinearAlgebra
 open MathNet.Numerics.LinearAlgebra.Double
 
-open FsML.Algorithms
-open FsML.Algorithms.Regression.LinearRegression
 open FsML.Common.Builders
-open FsML.Common.Types
+open FsML.Domain.Types
+open FsML.Domain.Regression
+open FsML.Algorithms.Regression.LinearRegression
 
 module WithPolynomialFeatures =
 
@@ -25,18 +26,19 @@ module WithPolynomialFeatures =
   let y = x |> Array.map (fun x -> x + (pown x 2) + (pown x 3) + normalDistribution.Sample())
 
   // Each row is a training sample
-  let trainingX = [|
-                    (Array.create x.Length 1.0) |> Array.toList |> vector
-                    x |> Array.toList |> vector
-                    (x |> DenseVector.OfArray).PointwisePower(2.0)
-                    (x |> DenseVector.OfArray).PointwisePower(3.0)
-                  |] |> DenseMatrix.OfColumnVectors
+  let H = [|
+            (Array.create x.Length 1.0) |> Array.toList |> vector
+            x |> Array.toList |> vector
+            (x |> DenseVector.OfArray).PointwisePower(2.0)
+            (x |> DenseVector.OfArray).PointwisePower(3.0)
+          |] |> DenseMatrix.OfColumnVectors
 
   // Each element is the ouput value for each training sample
-  let trainingY = y |> DenseVector.OfArray
+  let Y = y |> DenseVector.OfArray
 
-  let fit: Result<Vector<float>, ErrorResult> = Either.either {
-    let! fit = fitWithNormalEquation Optimization.Regularization.Without trainingX trainingY
+  let fit: Result<Weights, ErrorResult list> = Either.either {
+    let! trainingParameters = TrainingParameters.create H Y
+    let fit = fitWithNormalEquation Regularization.Without trainingParameters
     return fit
   }
 

@@ -2,8 +2,9 @@
 #I "/Users/carlosrodriguez-vega/.nuget/packages/mathnet.numerics/4.9.0/lib/netstandard2.0"
 #I "/Users/carlosrodriguez-vega/.nuget/packages/mathnet.numerics.fsharp/4.9.0/lib/netstandard2.0"
 
-#r "../../../build/Debug/netcoreapp3.0/FsML.Algorithms/FsML.Algorithms.dll"
 #r "../../../build/Debug/netcoreapp3.0/FsML.Common/FsML.Common.dll"
+#r "../../../build/Debug/netcoreapp3.0/FsML.Domain/FsML.Domain.dll"
+#r "../../../build/Debug/netcoreapp3.0/FsML.Algorithms/FsML.Algorithms.dll"
 #r "XPlot.Plotly.dll"
 #r "MathNet.Numerics.dll"
 #r "MathNet.Numerics.FSharp.dll"
@@ -13,11 +14,11 @@ open MathNet.Numerics.Distributions
 open MathNet.Numerics.LinearAlgebra
 open MathNet.Numerics.LinearAlgebra.Double
 
-open FsML.Algorithms
-open FsML.Algorithms.Optimization
-open FsML.Algorithms.Regression.LinearRegression
 open FsML.Common.Builders
-open FsML.Common.Types
+open FsML.Domain.Types
+open FsML.Domain.Regression
+open FsML.Domain.Optimization
+open FsML.Algorithms.Regression.LinearRegression
 
 module WithGradientDescent =
 
@@ -26,18 +27,19 @@ module WithGradientDescent =
   let y = x |> Array.map (fun x -> x + normalDistribution.Sample())
 
   // Each row is a training sample
-  let trainingX = [|
-                    Array.create x.Length 1.0 // Add intercept term
-                    x
-                  |] |> DenseMatrix.OfColumnArrays
+  let H = [|
+            Array.create x.Length 1.0 // Add intercept term
+            x
+          |] |> DenseMatrix.OfColumnArrays
 
   // Each element is the ouput value for each training sample
-  let trainingY = y |> DenseVector.OfArray
+  let Y = y |> DenseVector.OfArray
 
-  let fit: Result<Vector<float>, ErrorResult> = Either.either {
-    let gdParameters = { category = Optimization.GradientDescent.Batch; learningRate = 0.01; numberOfIterations = 1500u }
-    let linearRegressionWithBGD = fitWithGradientDescent Optimization.Regularization.Without gdParameters
-    let! fit = linearRegressionWithBGD trainingX trainingY
+  let fit: Result<Weights, ErrorResult list> = Either.either {
+    let! gdParameters = GradientDescentParameters.create GradientDescent.Batch 0.01 0.01 1500u
+    let! trainingParameters = TrainingParameters.create H Y
+    let linearRegressionWithBGD = fitWithGradientDescent Regularization.Without gdParameters
+    let fit = linearRegressionWithBGD trainingParameters
     return fit
   }
 

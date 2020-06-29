@@ -6,76 +6,81 @@ open MathNet.Numerics.Distributions
 open MathNet.Numerics.LinearAlgebra
 open MathNet.Numerics.LinearAlgebra.Double
 
-open FsML.Algorithms
-open FsML.Algorithms.Optimization
-open FsML.Algorithms.Regression.LinearRegression
 open FsML.Common.Builders
-open FsML.Common.Types
+open FsML.Domain.Types
+open FsML.Domain.Regression
+open FsML.Domain.Optimization
+open FsML.Algorithms.Regression.LinearRegression
 
 module LinearRegressionTests =
 
-  type Sample = { TrainingX: Matrix<float>; TrainingY: Vector<float> }
+  type Sample = { trainingH: Matrix<float>; trainingY: Vector<float> }
 
   type TestData =
     static member Sample () =
       gen {
-        let normalDistribution = Normal.WithMeanVariance(0.0, 0.5)
-        let! (intercept, slope) =  Gen.elements [-50.0..1.0..50.0] |> Gen.two
+        let normalDistribution = Normal.WithMeanVariance(0.0, 0.1)
+        let! (intercept, slope) =  Gen.elements [-50.0 .. 1.0 .. 50.0] |> Gen.two
 
         let x = [| 1.0..1.0..10.0 |]
         let y = x |> Array.map (fun x -> (x * slope + intercept) + normalDistribution.Sample())
 
-        let trainingX = [|
-                          (Array.create x.Length 1.0) |> Array.toList |> vector
-                          x |> Array.toList |> vector
-                        |] |> DenseMatrix.OfColumnVectors
-        let trainingY = y |> DenseVector.OfArray
-        return { TrainingX = trainingX; TrainingY = trainingY }
+        let H = [|
+                  (Array.create x.Length 1.0) |> Array.toList |> vector
+                  x |> Array.toList |> vector
+                |] |> DenseMatrix.OfColumnVectors
+        let Y = y |> DenseVector.OfArray
+        return { trainingH = H; trainingY = Y }
       } |> Arb.fromGen
 
   [<Property(Arbitrary=[| typeof<TestData> |])>]
-  let ``Can calculate regression line using normal equation`` ({ TrainingX = trainingX; TrainingY = trainingY }) =
+  let ``Can calculate regression line using normal equation`` ({ trainingH = H; trainingY = Y }) =
     let epsilon = 0.5
 
-    let fit: Result<Vector<float>, ErrorResult> = Either.either {
-      let! fit = fitWithNormalEquation Optimization.Regularization.Without trainingX trainingY
-      return fit
+    let cost: Result<MSE, ErrorResult list> = Either.either {
+      let! trainingParameters = TrainingParameters.create H Y
+      let fit = fitWithNormalEquation Regularization.Without trainingParameters
+      let! costParameters = CostParameters.create H Y fit
+      let cost = costFunction Regularization.Without costParameters
+      return cost
     }
 
-    match fit with
+    match cost with
     | Error _ -> false
-    | Ok fit -> match costFunction Optimization.Regularization.Without trainingX trainingY fit with
-                | Error _ -> false
-                | Ok cost -> cost < 1.0
+    | Ok cost -> cost < epsilon
 
   [<Property(Arbitrary=[| typeof<TestData> |])>]
-  let ``Can calculate regression line using batch gradient descent`` ({ TrainingX = trainingX; TrainingY = trainingY }) =
-    let epsilon = 0.5
-
-    let fit: Result<Vector<float>, ErrorResult> = Either.either {
-      let gdParameters = { category = Optimization.GradientDescent.Batch; learningRate = 0.01; numberOfIterations = 500u }
-      let linearRegressionWithBGD = fitWithGradientDescent Optimization.Regularization.Without gdParameters
-      let! fit = linearRegressionWithBGD trainingX trainingY
-      return fit
+  let ``Can calculate regression line using batch gradient descent`` ({ trainingH = H; trainingY = Y }) =
+    let epsilon = 5.0
+    
+    let cost: Result<MSE, ErrorResult list> = Either.either {
+      let! trainingParameters = TrainingParameters.create H Y
+      let! gdParameters = GradientDescentParameters.create GradientDescent.Batch 0.01 0.01 2000u
+      let linearRegressionWithBGD = fitWithGradientDescent Regularization.Without gdParameters
+      let fit = linearRegressionWithBGD trainingParameters
+      let! costParameters = CostParameters.create H Y fit
+      let cost = costFunction Regularization.Without costParameters
+      return cost
     }
 
-    match fit with
+    match cost with
     | Error _ -> false
-    | Ok fit -> match costFunction Optimization.Regularization.Without trainingX trainingY fit with
-                | Error _ -> false
-                | Ok cost -> cost < 1.0
+    | Ok cost -> cost < epsilon
 
   [<Property(Arbitrary=[| typeof<TestData> |])>]
-  let ``Can calculate regression line using stochastic gradient descent`` ({ TrainingX = trainingX; TrainingY = trainingY }) =
-    let fit: Result<Vector<float>, ErrorResult> = Either.either {
-      let gdParameters = { category = Optimization.GradientDescent.Batch; learningRate = 0.01; numberOfIterations = 500u }
-      let linearRegressionWithBGD = fitWithGradientDescent Optimization.Regularization.Without gdParameters
-      let! fit = linearRegressionWithBGD trainingX trainingY
-      return fit
+  let ``Can calculate regression line using stochastic gradient descent`` ({ trainingH = H; trainingY = Y }) =
+    let epsilon = 5.0
+
+    let cost: Result<MSE, ErrorResult list> = Either.either {
+      let! trainingParameters = TrainingParameters.create H Y
+      let! gdParameters = GradientDescentParameters.create GradientDescent.Batch 0.01 0.01 2000u
+      let linearRegressionWithBGD = fitWithGradientDescent Regularization.Without gdParameters
+      let fit = linearRegressionWithBGD trainingParameters
+      let! costParameters = CostParameters.create H Y fit
+      let cost = costFunction Regularization.Without costParameters
+      return cost
     }
 
-    match fit with
+    match cost with
     | Error _ -> false
-    | Ok fit -> match costFunction Optimization.Regularization.Without trainingX trainingY fit with
-                | Error _ -> false
-                | Ok cost -> cost < 1.0
+    | Ok cost -> cost < epsilon
