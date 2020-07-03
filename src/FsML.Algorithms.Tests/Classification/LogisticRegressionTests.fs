@@ -40,10 +40,10 @@ module LogisticRegressionTests =
 
   [<Property(Arbitrary=[| typeof<TestData> |])>]
   let ``Can calculate regression line using gradient descent`` ({ trainingH = H; trainingY = Y }) =
-    let epsilon = 0.5
+    let epsilon = 0.05
 
     let fit: Result<Weights, ErrorResult list> = Either.either {
-      let! gdParameters = GradientDescentParameters.create GradientDescent.Stochastic 0.05 0.05 50000u
+      let! gdParameters = GradientDescentParameters.create GradientDescent.Stochastic 0.0001 0.05 10000u
       let! trainingParameters = TrainingParameters.create H Y
       let logisticRegressionWithRegularization = fitWithGradientDescent Regularization.Without gdParameters
       let fit = logisticRegressionWithRegularization trainingParameters
@@ -52,6 +52,6 @@ module LogisticRegressionTests =
 
     match fit with
     | Error _ -> Assert.True(false)
-    | Ok fit -> Assert.InRange(fit.At(0), -0.05, 0.05)
+    | Ok fit -> Assert.InRange(fit.At(0), -1.0 * epsilon, epsilon)
                 Assert.Equal(fit.At(1), fit.At(1))
 

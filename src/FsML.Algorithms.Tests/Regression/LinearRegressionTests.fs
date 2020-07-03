@@ -51,11 +51,11 @@ module LinearRegressionTests =
 
   [<Property(Arbitrary=[| typeof<TestData> |])>]
   let ``Can calculate regression line using batch gradient descent`` ({ trainingH = H; trainingY = Y }) =
-    let epsilon = 5.0
+    let epsilon = 0.5
     
     let cost: Result<MSE, ErrorResult list> = Either.either {
       let! trainingParameters = TrainingParameters.create H Y
-      let! gdParameters = GradientDescentParameters.create GradientDescent.Batch 0.01 0.01 2000u
+      let! gdParameters = GradientDescentParameters.create GradientDescent.Batch 0.0001 0.01 10000u
       let linearRegressionWithBGD = fitWithGradientDescent Regularization.Without gdParameters
       let fit = linearRegressionWithBGD trainingParameters
       let! costParameters = CostParameters.create H Y fit
@@ -69,11 +69,11 @@ module LinearRegressionTests =
 
   [<Property(Arbitrary=[| typeof<TestData> |])>]
   let ``Can calculate regression line using stochastic gradient descent`` ({ trainingH = H; trainingY = Y }) =
-    let epsilon = 5.0
+    let epsilon = 0.5
 
     let cost: Result<MSE, ErrorResult list> = Either.either {
       let! trainingParameters = TrainingParameters.create H Y
-      let! gdParameters = GradientDescentParameters.create GradientDescent.Batch 0.01 0.01 2000u
+      let! gdParameters = GradientDescentParameters.create GradientDescent.Batch 0.0001 0.01 10000u
       let linearRegressionWithBGD = fitWithGradientDescent Regularization.Without gdParameters
       let fit = linearRegressionWithBGD trainingParameters
       let! costParameters = CostParameters.create H Y fit

@@ -40,9 +40,9 @@ module WithRegularization =
              else yield 0.0 |] |> DenseVector.OfArray
 
   let fit: Result<Weights, ErrorResult list> = Either.either {
-    let! gdParameters = GradientDescentParameters.create GradientDescent.Stochastic 0.05 0.05 50000u
+    let! gdParameters = GradientDescentParameters.create GradientDescent.Batch 0.0001 0.05 10000u
     let! trainingParameters = TrainingParameters.create H Y
-    let logisticRegressionWithRegularization = fitWithGradientDescent (Regularization.With(0.01)) gdParameters
+    let logisticRegressionWithRegularization = fitWithGradientDescent (Regularization.With(5.0)) gdParameters
     let fit = logisticRegressionWithRegularization trainingParameters
     return fit
   }
@@ -59,19 +59,19 @@ module WithRegularization =
                   x = (classA |> Array.map fst),
                   y = (classA |> Array.map snd),
                   mode = "markers",
-                  name = "Observed values"
+                  name = "Category A"
                 );
                 Scatter(
                   x = (classB |> Array.map fst),
                   y = (classB |> Array.map snd),
                   mode = "markers",
-                  name = "Observed values"
+                  name = "Category B"
                 );
                 Scatter(
                   x = x,
                   y = (x |> Array.map (fun x -> -1.0 * (fit.At(0) + fit.At(1) * (pown x 2)) / fit.At(2))),
                   mode = "lines",
-                  name = "Regression line"
+                  name = "Classification line"
                 )
               ]
               |> Chart.Plot

@@ -16,12 +16,8 @@
     <Compile Include="Types.fs" />
     <Compile Include="Regression.fs" />
     <Compile Include="Optimization.fs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="MathNet.Numerics.FSharp" Version="4.9.0" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="EmptyTextFile.txt" />
+    <PackageReference Include="MathNet.Numerics.FSharp" Version="4.11.0" />
     <ProjectReference Include="..\FsML.Common\FsML.Common.fsproj" />
   </ItemGroup>
 </Project>

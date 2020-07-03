@@ -23,7 +23,7 @@ module LogisticRegression =
   /// <returns>The estimated probability that y = 1 on input x)</returns>
   let private hypothesis (H: Regressors) (W: Weights) : Predictions = sigmoidFunction (H * W)
 
-  let private constFunction' regularization (H: Regressors) (Y: Regressand) (W: Weights) : MSE = 
+  let private costFunction' regularization (H: Regressors) (Y: Regressand) (W: Weights) : MSE = 
     let aux = 1.0 / float H.RowCount
     let costWithoutRegularization = -1.0 * aux * (Y * (sigmoidFunction (H * W)).PointwiseLog()
                                     + (1.0 - Y) * (1.0 - sigmoidFunction (H * W)).PointwiseLog())
@@ -54,7 +54,7 @@ module LogisticRegression =
     let Y = CostParameters.getY costParameters
     let W = CostParameters.getW costParameters
 
-    constFunction' regularization H Y W
+    costFunction' regularization H Y W
 
   /// <summary>
   /// Fit with gradient descent
@@ -68,7 +68,7 @@ module LogisticRegression =
   /// <param name="trainingParameters">Parameters for training</param>
   /// <returns>Vector of weights</returns>
   let fitWithGradientDescent regularization gradientDescentParameters trainingParameters : Weights =
-    Optimization.gradientDescent regularization gradientDescentParameters hypothesis constFunction' trainingParameters
+    Optimization.gradientDescent regularization gradientDescentParameters hypothesis costFunction' trainingParameters
 
   /// <summary>
   /// Predict

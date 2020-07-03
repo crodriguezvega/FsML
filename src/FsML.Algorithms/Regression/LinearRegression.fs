@@ -16,7 +16,7 @@ module LinearRegression =
   /// <returns>Vector of predictions</returns>
   let private hypothesis (H: Regressors) (W: Weights) : Predictions = H * W
 
-  let private constFunction' regularization (H: Regressors) (Y: Regressand) (W: Weights) : MSE = 
+  let private costFunction' regularization (H: Regressors) (Y: Regressand) (W: Weights) : MSE = 
     let aux = (1.0 / (2.0 * float H.RowCount))
     let prediction = hypothesis H W
     let costWithoutRegularization = aux * (prediction - Y).PointwisePower(2.0).Sum()
@@ -47,7 +47,7 @@ module LinearRegression =
     let Y = CostParameters.getY costParameters
     let W = CostParameters.getW costParameters
 
-    constFunction' regularization H Y W
+    costFunction' regularization H Y W
 
   /// <summary>
   /// Fit with gradient descent
@@ -61,7 +61,7 @@ module LinearRegression =
   /// <param name="trainingParameters">Parameters for training</param>
   /// <returns>Vector of weights</returns>
   let fitWithGradientDescent regularization gradientDescentParameters trainingParameters : Weights =
-    Optimization.gradientDescent regularization gradientDescentParameters hypothesis constFunction' trainingParameters
+    Optimization.gradientDescent regularization gradientDescentParameters hypothesis costFunction' trainingParameters
 
   /// <summary>
   /// Fit with normal equation
