@@ -5,8 +5,8 @@ FsML
 
 Machine learning in F#.
 
-- [ ] Linear regression
-- [ ] Logistic regression
+- [x] Linear regression
+- [x] Logistic regression
 - [ ] K-means clustering
 - [ ] Support Vector Machines
 - [ ] Decision trees
