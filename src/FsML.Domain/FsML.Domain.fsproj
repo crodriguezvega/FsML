@@ -16,8 +16,10 @@
     <Compile Include="Types.fs" />
     <Compile Include="Regression.fs" />
     <Compile Include="Optimization.fs" />
-    <None Include="EmptyTextFile.txt" />
     <PackageReference Include="MathNet.Numerics.FSharp" Version="4.11.0" />
     <ProjectReference Include="..\FsML.Common\FsML.Common.fsproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="EmptyTextFile.txt" />
   </ItemGroup>
 </Project>
